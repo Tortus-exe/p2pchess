@@ -15,6 +15,7 @@ use tui::{
     widgets::{BarChart, Block, Borders},
     Frame, Terminal,
 };
+mod chessboard;
 
 struct App<'a> {
     data: Vec<(&'a str, u64)>,
