@@ -46,15 +46,34 @@ impl Board {
      * 
      */
     fn gen_valid_origin_points( kind: char,
-                         (tx, ty): (u8, u8), 
-                       ) -> Vec<(u8, u8)> {
-        Vec<_> possibilities = match kind {
-            'p'       => vec![(tx, ty+2), (tx, ty+1), (tx+1, ty+1), (tx-1, ty+1)];
-            'r' | 'R' => (0..=7).map(|x| (x, ty)).chain(
-                         (0..=7).map(|y| (tx, y)))
-                         .collect(); // turn this chaining into a macro
-            'k' | 'K' => (-1..=1).map(|x| (-1..=1).map(|y| (tx+x, ty+y))).collect();
-            _ => vec![];
+                         (kx, ky): (u8, u8), 
+                       ) -> impl Iterator<Item=(u8, u8)> {
+        let genVec: Vec<(i8, i8)>;
+        let tx = kx as i8;
+        let ty = ky as i8;
+        match kind {
+            'p'       => genVec = vec![(tx, ty+2), (tx, ty+1), (tx+1, ty+1), (tx-1, ty+1)],
+            'P'       => genVec = vec![(tx, ty-2), (tx, ty-1), (tx+1, tx-1), (tx-1, ty-1)],
+            'r' | 'R' => genVec = (0..=7).map(|x| (x, ty)).chain(
+                                  (0..=7).map(|y| (tx, y)))
+                                  .collect(),
+            'k' | 'K' => genVec = (0..=2).flat_map(move |x| (0..=2).map(move |y| (tx+x-1, ty+y-1))).collect(),
+            'b' | 'B' => genVec = (0..=7).map(|x| {
+                                      if tx > ty {(x-ty+tx, x)} 
+                                      else {(x, x+ty-tx)}}).chain(
+                                  (0..=7).map(|x| (tx+ty-x, x)))
+                                  .collect(),
+            'q' | 'Q' => genVec = (0..=7).map(|x| (x, ty)).chain(
+                                  (0..=7).map(|y| (tx, y)).chain(
+                                  (0..=7).map(|x| (tx+ty-x, x)).chain(
+                                  (0..=7).map(|x| {
+                                      if tx > ty {(x-ty+tx, x)} 
+                                      else {(x, x+ty-tx)}}))))
+                                  .collect(),
+            'n' | 'N' => genVec = vec![(tx+2, ty+1), (tx+2, ty-1), (tx-2, ty+1), (tx-2, ty-1), 
+                                       (tx+1, ty+2), (tx-1, ty+2), (tx+1, ty-2), (tx-1, ty-2)],
+            _ => genVec = vec![],
         }
+        genVec.into_iter().filter(move |(x,y)| *x>=0 && *y>=0 && (*x,*y)!=(tx,ty)).map(|(x,y)| (x as u8, y as u8))
     }
 }
