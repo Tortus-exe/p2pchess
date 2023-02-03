@@ -28,12 +28,12 @@ impl Board {
     }
 
     pub fn get_at(&self, (file, rank): (u8, u8)) -> char {
-        self.state[(rank*8+file) as usize]
+        self.state[(rank << 3 | file) as usize]
     }
 
     pub fn move_to(&mut self, (fromfile, fromrank): (u8, u8), (tofile, torank): (u8, u8)) {
-        self.state[(torank*8+tofile) as usize] = self.get_at((fromfile, fromrank));
-        self.state[(fromrank*8+fromfile) as usize] = ' ';
+        self.state[(torank << 3 | tofile) as usize] = self.get_at((fromfile, fromrank));
+        self.state[(fromrank << 3 | fromfile) as usize] = ' ';
     }
 
     /*
@@ -48,12 +48,12 @@ impl Board {
     fn gen_valid_origin_points( kind: char,
                          (tx, ty): (u8, u8), 
                        ) -> Vec<(u8, u8)> {
-        Vec<(u8, u8)> possibilities = match kind {
-            'p' => vec![(tx, ty+2), (tx, ty+1), (tx+1, ty+1), (tx-1, ty+1)];
-            'r' => (-7..7).map(|x| (tx+x, ty)).collect().append(
-                    (-7..7).map(|y| (tx, ty+y)).collect());
-            'k' => (-1..1).map(|x| (tx+x, ty)).collect().append(
-                    )
+        Vec<_> possibilities = match kind {
+            'p'       => vec![(tx, ty+2), (tx, ty+1), (tx+1, ty+1), (tx-1, ty+1)];
+            'r' | 'R' => (0..=7).map(|x| (x, ty)).chain(
+                         (0..=7).map(|y| (tx, y)))
+                         .collect(); // turn this chaining into a macro
+            'k' | 'K' => (-1..=1).map(|x| (-1..=1).map(|y| (tx+x, ty+y))).collect();
             _ => vec![];
         }
     }
