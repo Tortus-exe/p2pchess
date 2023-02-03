@@ -31,13 +31,40 @@ impl Board {
         self.state[(rank << 3 | file) as usize]
     }
 
-    pub fn move_to(&mut self, (fromfile, fromrank): (u8, u8), (tofile, torank): (u8, u8)) {
-        self.state[(torank << 3 | tofile) as usize] = self.get_at((fromfile, fromrank));
-        self.state[(fromrank << 3 | fromfile) as usize] = ' ';
+    pub fn move_to(&mut self, 
+                    piece: char, 
+                    is_blacks_turn: bool,
+                    file_discriminator: Option<u8>,
+                    rank_discriminator: Option<u8>,
+                    (tofile, torank): (u8, u8)) -> bool{
+        let arg_piece: char = if is_blacks_turn { piece.to_ascii_uppercase() } else { piece };
+        let (mut currx, mut curry) : (u8, u8) = (8, 8);
+        let filehint: u8 = file_discriminator.unwrap_or(8);
+        let rankhint: u8 = rank_discriminator.unwrap_or(8);
+        let mut times_found: u8 = 0;
+
+        for (sqx, sqy) in Self::valid_origin_points(arg_piece, (tofile, torank)) {
+            if self.state[(sqy << 3 | sqx) as usize] == arg_piece {
+                match times_found {
+                    0 => (currx, curry) = (sqx, sqy),
+                    1 => (currx, curry) = if filehint == currx { (sqx, sqy) } 
+                                          else { (8, 8) },
+                    2 => (currx, curry) = if filehint == currx && rankhint == curry { (sqx, sqy) }
+                                          else { (8, 8) },
+                    _ => (currx, curry) = (8, 8),
+                }
+                times_found = times_found + 1;
+            }
+        }
+        if (currx, curry) != (8, 8) {
+            self.state[(torank << 3 | tofile) as usize] = self.get_at((currx, curry));
+            self.state[(curry << 3 | currx) as usize] = ' ';
+        }
+        return (currx, curry) != (8, 8);
     }
 
     /*
-     * checks whether or not there is a valid piece that can move to a target square.
+     * generates all valid origin points of a valid piece that can move to a target square.
      * 
      * param: kind -- lowercase = white, uppercase = black,
      *                P = pawn, B = bishop, R = rook, Q = queen, K = king, N = knight
@@ -45,35 +72,41 @@ impl Board {
      * returns: a list of valid locations of those pieces.
      * 
      */
-    fn gen_valid_origin_points( kind: char,
+    fn valid_origin_points( kind: char,
                          (kx, ky): (u8, u8), 
                        ) -> impl Iterator<Item=(u8, u8)> {
-        let genVec: Vec<(i8, i8)>;
+        let gen_vec: Vec<(i8, i8)>;
         let tx = kx as i8;
         let ty = ky as i8;
         match kind {
-            'p'       => genVec = vec![(tx, ty+2), (tx, ty+1), (tx+1, ty+1), (tx-1, ty+1)],
-            'P'       => genVec = vec![(tx, ty-2), (tx, ty-1), (tx+1, tx-1), (tx-1, ty-1)],
-            'r' | 'R' => genVec = (0..=7).map(|x| (x, ty)).chain(
+            'p'       => gen_vec = vec![(tx, ty+2), (tx, ty+1), (tx+1, ty+1), (tx-1, ty+1)],
+            'P'       => gen_vec = vec![(tx, ty-2), (tx, ty-1), (tx+1, tx-1), (tx-1, ty-1)],
+            'r' | 'R' => gen_vec = (0..=7).map(|x| (x, ty)).chain(
                                   (0..=7).map(|y| (tx, y)))
                                   .collect(),
-            'k' | 'K' => genVec = (0..=2).flat_map(move |x| (0..=2).map(move |y| (tx+x-1, ty+y-1))).collect(),
-            'b' | 'B' => genVec = (0..=7).map(|x| {
+            'k' | 'K' => gen_vec = (0..=2).flat_map(move |x| (0..=2).map(move |y| (tx+x-1, ty+y-1))).collect(),
+            'b' | 'B' => gen_vec = (0..=7).map(|x| {
                                       if tx > ty {(x-ty+tx, x)} 
                                       else {(x, x+ty-tx)}}).chain(
                                   (0..=7).map(|x| (tx+ty-x, x)))
                                   .collect(),
-            'q' | 'Q' => genVec = (0..=7).map(|x| (x, ty)).chain(
+            'q' | 'Q' => gen_vec = (0..=7).map(|x| (x, ty)).chain(
                                   (0..=7).map(|y| (tx, y)).chain(
                                   (0..=7).map(|x| (tx+ty-x, x)).chain(
                                   (0..=7).map(|x| {
                                       if tx > ty {(x-ty+tx, x)} 
                                       else {(x, x+ty-tx)}}))))
                                   .collect(),
-            'n' | 'N' => genVec = vec![(tx+2, ty+1), (tx+2, ty-1), (tx-2, ty+1), (tx-2, ty-1), 
+            'n' | 'N' => gen_vec = vec![(tx+2, ty+1), (tx+2, ty-1), (tx-2, ty+1), (tx-2, ty-1), 
                                        (tx+1, ty+2), (tx-1, ty+2), (tx+1, ty-2), (tx-1, ty-2)],
-            _ => genVec = vec![],
+            _ => gen_vec = vec![],
         }
-        genVec.into_iter().filter(move |(x,y)| *x>=0 && *y>=0 && (*x,*y)!=(tx,ty)).map(|(x,y)| (x as u8, y as u8))
+        gen_vec.into_iter()
+               .filter(move |(x,y)| *x>=0 && 
+                                    *y>=0 && 
+                                    *x<=7 && 
+                                    *y<=7 && 
+                                    (*x,*y)!=(tx,ty))
+               .map(|(x,y)| (x as u8, y as u8))
     }
 }
