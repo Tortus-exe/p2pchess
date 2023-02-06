@@ -17,7 +17,48 @@ use tui::{
 };
 mod chessboard;
 
-// don't change this, it works well.
+struct App<'a> {
+    data: Vec<(&'a str, u64)>,
+}
+
+impl<'a> App<'a> {
+    fn new() -> App<'a> {
+        App {
+            data: vec![
+                ("B1", 9),
+                ("B2", 12),
+                ("B3", 5),
+                ("B4", 8),
+                ("B5", 2),
+                ("B6", 4),
+                ("B7", 5),
+                ("B8", 9),
+                ("B9", 14),
+                ("B10", 15),
+                ("B11", 1),
+                ("B12", 0),
+                ("B13", 4),
+                ("B14", 6),
+                ("B15", 4),
+                ("B16", 6),
+                ("B17", 4),
+                ("B18", 7),
+                ("B19", 13),
+                ("B20", 8),
+                ("B21", 11),
+                ("B22", 9),
+                ("B23", 3),
+                ("B24", 5),
+            ],
+        }
+    }
+
+    fn on_tick(&mut self) {
+        let value = self.data.pop().unwrap();
+        self.data.insert(0, value);
+    }
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     // setup terminal
     enable_raw_mode()?;
@@ -28,17 +69,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // create app and run it
     let tick_rate = Duration::from_millis(250);
-    let board = Board::new(vec![ // TODO: turn this into a macro
-        'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R', 
-        'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 
-        'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
-    ]);
-    let res = run_app(&mut terminal, board, tick_rate);
+    let app = App::new();
+    let res = run_app(&mut terminal, app, tick_rate);
 
     // restore terminal
     disable_raw_mode()?;
@@ -56,10 +88,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run_app<B: Backend>(terminal: &mut Terminal<B>,
-                        mut board: Board,
-                        tick_rate: Duration,
-                      ) -> io::Result<()> {
+fn run_app<B: Backend>(
+    terminal: &mut Terminal<B>,
+    mut app: App,
+    tick_rate: Duration,
+) -> io::Result<()> {
     let mut last_tick = Instant::now();
     loop {
         terminal.draw(|f| ui(f, &app))?;
