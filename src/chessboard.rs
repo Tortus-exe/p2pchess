@@ -1,4 +1,4 @@
-struct Board {
+pub struct Board {
     state: Vec<char>,
     /*    x ->
      * y 0 1 2 3 4 5 6 7

@@ -16,6 +16,7 @@ use tui::{
     Frame, Terminal,
 };
 mod chessboard;
+use crate::chessboard::Board;
 
 // don't change this, it works well.
 fn main() -> Result<(), Box<dyn Error>> {
@@ -62,7 +63,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>,
                       ) -> io::Result<()> {
     let mut last_tick = Instant::now();
     loop {
-        terminal.draw(|f| ui(f, &app))?;
+        terminal.draw(|f| ui(f, &board))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
@@ -74,56 +75,29 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>,
                 }
             }
         }
+        /* <-- timing thing
         if last_tick.elapsed() >= tick_rate {
             app.on_tick();
             last_tick = Instant::now();
         }
+        */
     }
 }
 
-fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
-    let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .margin(2)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.size());
-    let barchart = BarChart::default()
-        .block(Block::default().title("Data1").borders(Borders::ALL))
-        .data(&app.data)
-        .bar_width(9)
-        .bar_style(Style::default().fg(Color::Yellow))
-        .value_style(Style::default().fg(Color::Black).bg(Color::Yellow));
-    f.render_widget(barchart, chunks[0]);
+fn white_square() -> Block<'static> {
+    Block::default()
+        .style(Style::default().bg(Color::White)) }
+fn black_square() -> Block<'static> {
+    Block::default().style(Style::default().bg(Color::Black))
+}
 
-    let chunks = Layout::default()
+fn ui<B: Backend>(f: &mut Frame<B>, board: &Board) {
+    let board_layout = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(chunks[1]);
-
-    let barchart = BarChart::default()
-        .block(Block::default().title("Data2").borders(Borders::ALL))
-        .data(&app.data)
-        .bar_width(5)
-        .bar_gap(3)
-        .bar_style(Style::default().fg(Color::Green))
-        .value_style(
-            Style::default()
-                .bg(Color::Green)
-                .add_modifier(Modifier::BOLD),
-        );
-    f.render_widget(barchart, chunks[0]);
-
-    let barchart = BarChart::default()
-        .block(Block::default().title("Data3").borders(Borders::ALL))
-        .data(&app.data)
-        .bar_style(Style::default().fg(Color::Red))
-        .bar_width(7)
-        .bar_gap(0)
-        .value_style(Style::default().bg(Color::Red))
-        .label_style(
-            Style::default()
-                .fg(Color::Cyan)
-                .add_modifier(Modifier::ITALIC),
-        );
-    f.render_widget(barchart, chunks[1]);
+        .constraints([Constraint::Ratio(1,8), Constraint::Ratio(1,8)].as_ref())
+        .split(f.size());
+//    let white_square = Block::default().style(Style::default().bg(Color::White));
+//    let black_square = Block::default().style(Style::default().bg(Color::Black));
+    f.render_widget(white_square(), board_layout[0]);
+    f.render_widget(black_square(), board_layout[0]);
 }
