@@ -51,7 +51,7 @@ impl Board {
                                           else { (8, 8) },
                     2 => (currx, curry) = if filehint == currx && rankhint == curry { (sqx, sqy) }
                                           else { (8, 8) },
-                    _ => (currx, curry) = (8, 8),
+                    _ => (currx, curry) = (8, 8), // <- Note: this should NEVER HAPPEN!!
                 }
                 times_found = times_found + 1;
             }
