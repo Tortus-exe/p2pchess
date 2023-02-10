@@ -37,7 +37,7 @@ fn main() -> Result<()> {
         'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
     ]);
 
-    printBoardGrid(5, 5)?;
+    printBoardGrid(5, 5, 8, 8, 6, 3)?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
@@ -60,20 +60,13 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
-fn printBoardGrid(x: u16, y: u16) -> Result<()> {
-    let NUMROWS = 8;
-    let NUMCOLS = 8;
-    let CELLWIDTH = 6;
-    let CELLHEIGHT = 3;
-
+fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usize, cellheight: usize) -> Result<()> {
     execute!(stdout(), MoveTo(x,y))?;
-    for rank in 0..(NUMROWS*CELLHEIGHT) {
-        for _ in 0..(NUMCOLS/2) { // <- THIS will produce a bug where odd number of cols dont work.
+    for rank in 0..(numrows*cellheight) {
+        for file in 0..numcols {
             execute!(stdout(),
-                SetBackgroundColor(if (rank/CELLHEIGHT)%2==0 {Color::White} else {Color::Black}),
-                Print(format!("{: <1$}", "", CELLWIDTH)),
-                SetBackgroundColor(if (rank/CELLHEIGHT)%2==0 {Color::Black} else {Color::White}),
-                Print(format!("{: <1$}", "", CELLWIDTH)),
+                SetBackgroundColor(if (rank/cellheight + file)%2==0 {Color::White} else {Color::Black}),
+                Print(format!("{: <1$}", "", cellwidth)),
                 ResetColor
             )?;
         }
