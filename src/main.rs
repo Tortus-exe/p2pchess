@@ -37,7 +37,7 @@ fn main() -> Result<()> {
         'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
     ]);
 
-    printBoardGrid(5, 5, 8, 8, 6, 3)?;
+    printBoardGrid(10, 5, 8, 8, 6, 3)?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
@@ -61,17 +61,41 @@ fn main() -> Result<()> {
 }
 
 fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usize, cellheight: usize) -> Result<()> {
-    execute!(stdout(), MoveTo(x,y))?;
+    let BORDERCOLOR = Color::Rgb{r:117, g:83, b:24};
+
+    execute!(stdout(), 
+        MoveTo(x,y), 
+        SetBackgroundColor(BORDERCOLOR), 
+        Print(format!("{: <1$}\n\r", "", 4+cellwidth*numcols)),
+        ResetColor,
+        Print(format!("{: <1$}", "", x as usize))
+    )?;
     for rank in 0..(numrows*cellheight) {
+        execute!(stdout(),
+            SetBackgroundColor(BORDERCOLOR),
+            Print("  ")
+        )?;
         for file in 0..numcols {
             execute!(stdout(),
-                SetBackgroundColor(if (rank/cellheight + file)%2==0 {Color::White} else {Color::Black}),
+                SetBackgroundColor(
+                    if (rank/cellheight + file)%2==0 {Color::White} 
+                    else {Color::Black}
+                ),
                 Print(format!("{: <1$}", "", cellwidth)),
-                ResetColor
             )?;
         }
-        print!("\n\r{: <1$}", "", x as usize);
+        execute!(stdout(), 
+            SetBackgroundColor(BORDERCOLOR),
+            Print("  "),
+            ResetColor,
+            Print(format!("\n\r{: <1$}", "", x as usize))
+        )?;
     }
+    execute!(stdout(), 
+        SetBackgroundColor(BORDERCOLOR), 
+        Print(format!("{: <1$}\n\r", "", 4+cellwidth*numcols)),
+        ResetColor
+    )?;
     
     stdout().flush();
     Ok(())
