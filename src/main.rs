@@ -61,7 +61,21 @@ fn main() -> Result<()> {
         3,  // height of each cell
         board, // the board
         Color::White,
-        Color::Black
+        Color::Black,
+        HashMap::from([
+            ('R', '♜'),
+            ('B', '♝'),
+            ('N', '♞'),
+            ('Q', '♛'),
+            ('K', '♚'),
+            ('P', '♟'),
+            ('r', '♖'),
+            ('b', '♗'),
+            ('n', '♘'),
+            ('q', '♕'),
+            ('k', '♔'),
+            ('p', '♙')
+        ])
     )?;
 
     loop {
@@ -85,14 +99,15 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
-fn showPieces(x: u16, y: u16, numCols: usize, colWidth: usize, rowHeight: usize, board: Board, COLOR_A: Color, COLOR_B: Color) -> Result<()> {
+fn showPieces(x: u16, y: u16, numCols: usize, colWidth: usize, rowHeight: usize, board: Board, COLOR_A: Color, COLOR_B: Color, display_version_of: HashMap<char, char>) -> Result<()> {
     for row in 0..(board.state.len()/numCols) {
         for col in 0..numCols {
+            // let piece = display_version_of.get(&board.state[row*numCols+col]).unwrap_or(&board.state[row*numCols+col]);
             execute!(stdout(),
                 MoveTo(x+(col*colWidth) as u16, y+(row*rowHeight) as u16),
                 SetBackgroundColor(if (col+row)%2==0 {COLOR_A} else {COLOR_B}),
                 SetForegroundColor(if (col+row)%2==0 {COLOR_B} else {COLOR_A}),
-                Print(board.state[row*numCols+col]),
+                Print(display_version_of.get(&board.state[row*numCols+col]).unwrap_or(&board.state[row*numCols+col])),
             )?;
         }
     }
