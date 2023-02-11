@@ -1,3 +1,5 @@
+// vim:foldmethod=marker:ft=rust
+// IMPORTS {{{
 use crossterm::{
     event::{Event, KeyCode, KeyEvent, KeyModifiers, read},
     execute,
@@ -13,6 +15,7 @@ use std::{
 };
 mod chessboard;
 use crate::chessboard::Board;
+// }}}
 
 // don't change this, it works well.
 fn main() -> Result<()> {
@@ -37,7 +40,18 @@ fn main() -> Result<()> {
         'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
     ]);
 
-    printBoardGrid(10, 5, 8, 8, 6, 3, "ABCDEFGH".to_string(), "12345678".to_string(), Color::White, Color::Black, Color::Rgb{r:117, g:83, b:24})?;
+    printBoardGrid(
+        10, // x pos
+        5,  // y pos
+        8,  // num rows vertically
+        8,  // num columns horizontally
+        6,  // width of each cell
+        3,  // height of each cell
+        "ABCDEFGH".to_string(), 
+        "12345678".to_string(), 
+        Color::White, 
+        Color::Black, 
+        Color::Rgb{r:117, g:83, b:24})?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
@@ -60,6 +74,7 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
+// board printing {{{
 fn printBoardGrid(x: u16, 
                   y: u16, 
                   numrows: usize, 
@@ -122,3 +137,4 @@ fn printBoardGrid(x: u16,
     stdout().flush()?;
     Ok(())
 }
+// }}}
