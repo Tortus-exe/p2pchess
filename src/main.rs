@@ -12,6 +12,7 @@ use std::{
     error::Error,
     io::{stdout, Write},
     time::{Duration, Instant},
+    collections::HashMap
 };
 mod chessboard;
 use crate::chessboard::Board;
@@ -52,6 +53,16 @@ fn main() -> Result<()> {
         Color::White, 
         Color::Black, 
         Color::Rgb{r:117, g:83, b:24})?;
+    showPieces(
+        15, // x pos
+        7,  // y pos
+        8,  // num cols
+        6,  // width of each cell
+        3,  // height of each cell
+        board, // the board
+        Color::White,
+        Color::Black
+    )?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
@@ -74,6 +85,21 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
+fn showPieces(x: u16, y: u16, numCols: usize, colWidth: usize, rowHeight: usize, board: Board, COLOR_A: Color, COLOR_B: Color) -> Result<()> {
+    for row in 0..(board.state.len()/numCols) {
+        for col in 0..numCols {
+            execute!(stdout(),
+                MoveTo(x+(col*colWidth) as u16, y+(row*rowHeight) as u16),
+                SetBackgroundColor(if (col+row)%2==0 {COLOR_A} else {COLOR_B}),
+                SetForegroundColor(if (col+row)%2==0 {COLOR_B} else {COLOR_A}),
+                Print(board.state[row*numCols+col]),
+            )?;
+        }
+    }
+
+    stdout().flush();
+    Ok(())
+}
 // board printing {{{
 fn printBoardGrid(x: u16, 
                   y: u16, 
