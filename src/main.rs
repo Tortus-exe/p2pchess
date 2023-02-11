@@ -62,6 +62,8 @@ fn main() -> Result<()> {
 
 fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usize, cellheight: usize) -> Result<()> {
     let BORDERCOLOR = Color::Rgb{r:117, g:83, b:24};
+    let fileLabels = "ABCDEFGH";
+    let rankLabels = "12345678";
 
     execute!(stdout(), 
         MoveTo(x,y), 
@@ -73,7 +75,7 @@ fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usi
     for rank in 0..(numrows*cellheight) {
         execute!(stdout(),
             SetBackgroundColor(BORDERCOLOR),
-            Print("  ")
+            Print(format!("{} ", if rank%cellheight==cellheight/2 {fileLabels.chars().nth(rank/cellheight).unwrap()} else {' '})),
         )?;
         for file in 0..numcols {
             execute!(stdout(),
@@ -93,10 +95,17 @@ fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usi
     }
     execute!(stdout(), 
         SetBackgroundColor(BORDERCOLOR), 
-        Print(format!("{: <1$}\n\r", "", 4+cellwidth*numcols)),
-        ResetColor
+        Print("  ")
     )?;
+    for column in 0..numcols {
+        execute!(stdout(),
+            Print(format!("{: <1$}", "", cellwidth/2)),
+            Print(format!("{}", rankLabels.chars().nth(column).unwrap())),
+            Print(format!("{: <1$}", "", cellwidth/2-1))
+        )?;
+    }
+    execute!(stdout(), Print("  "), ResetColor)?;
     
-    stdout().flush();
+    stdout().flush()?;
     Ok(())
 }
