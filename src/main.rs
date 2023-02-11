@@ -37,7 +37,7 @@ fn main() -> Result<()> {
         'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
     ]);
 
-    printBoardGrid(10, 5, 8, 8, 6, 3)?;
+    printBoardGrid(10, 5, 8, 8, 6, 3, "ABCDEFGH".to_string(), "12345678".to_string(), Color::White, Color::Black, Color::Rgb{r:117, g:83, b:24})?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
@@ -60,11 +60,20 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
-fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usize, cellheight: usize) -> Result<()> {
-    let BORDERCOLOR = Color::Rgb{r:117, g:83, b:24};
-    let fileLabels = "ABCDEFGH";
-    let rankLabels = "12345678";
+fn printBoardGrid(x: u16, 
+                  y: u16, 
+                  numrows: usize, 
+                  numcols: usize, 
+                  cellwidth: usize, 
+                  cellheight: usize,
+                  fileLabels: String, 
+                  rankLabels: String,
+                  COLOR_A: Color,
+                  COLOR_B: Color, 
+                  BORDERCOLOR: Color
+                  ) -> Result<()> {
 
+    //display the top border
     execute!(stdout(), 
         MoveTo(x,y), 
         SetBackgroundColor(BORDERCOLOR), 
@@ -72,6 +81,8 @@ fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usi
         ResetColor,
         Print(format!("{: <1$}", "", x as usize))
     )?;
+
+    //loop through every rank and draw each row of the board
     for rank in 0..(numrows*cellheight) {
         execute!(stdout(),
             SetBackgroundColor(BORDERCOLOR),
@@ -80,8 +91,8 @@ fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usi
         for file in 0..numcols {
             execute!(stdout(),
                 SetBackgroundColor(
-                    if (rank/cellheight + file)%2==0 {Color::White} 
-                    else {Color::Black}
+                    if (rank/cellheight + file)%2==0 {COLOR_A} 
+                    else {COLOR_B}
                 ),
                 Print(format!("{: <1$}", "", cellwidth)),
             )?;
@@ -93,6 +104,8 @@ fn printBoardGrid(x: u16, y: u16, numrows: usize, numcols: usize, cellwidth: usi
             Print(format!("\n\r{: <1$}", "", x as usize))
         )?;
     }
+
+    //draw the final border with the legends
     execute!(stdout(), 
         SetBackgroundColor(BORDERCOLOR), 
         Print("  ")
