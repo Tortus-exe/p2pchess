@@ -30,7 +30,7 @@ fn main() -> Result<()> {
     enable_raw_mode()?; // allows us to get the keypresses without the user having to press "enter"
                         // like in a regular terminal
 
-    let board = Board::new(vec![ // TODO: turn this into a macro
+    let mut board = Board::new(vec![ // TODO: turn this into a macro
         'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R', 
         'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
@@ -40,6 +40,14 @@ fn main() -> Result<()> {
         'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 
         'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
     ]);
+
+    board.move_to('p', true, None, None, (3, 2));
+    board.move_to('p', false, None, None, (3, 4));
+    board.move_to('p', true, None, None, (4, 3));
+    board.move_to('p', false, None, None, (4, 4));
+    board.move_to('n', true, None, None, (5, 2));
+    board.move_to('q', false, None, None, (0, 4));
+    board.move_to('n', true, None, None, (4, 4));
 
     printBoardGrid(
         10, // x pos

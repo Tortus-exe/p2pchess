@@ -27,7 +27,7 @@ impl Board {
         retval
     }
 
-    pub fn get_at(&self, (file, rank): (u8, u8)) -> char {
+    pub fn get_at(&self, file: u8, rank: u8) -> char {
         self.state[(rank << 3 | file) as usize]
     }
 
@@ -43,7 +43,7 @@ impl Board {
         let rankhint: u8 = rank_discriminator.unwrap_or(8);
         let mut times_found: u8 = 0;
 
-        for (sqx, sqy) in Self::valid_origin_points(arg_piece, (tofile, torank)) {
+        for (sqx, sqy) in Self::valid_origin_points(self, arg_piece, (tofile, torank)) {
             if self.state[(sqy << 3 | sqx) as usize] == arg_piece {
                 match times_found {
                     0 => (currx, curry) = (sqx, sqy),
@@ -57,7 +57,7 @@ impl Board {
             }
         }
         if (currx, curry) != (8, 8) {
-            self.state[(torank << 3 | tofile) as usize] = self.get_at((currx, curry));
+            self.state[(torank << 3 | tofile) as usize] = self.get_at(currx, curry);
             self.state[(curry << 3 | currx) as usize] = ' ';
         }
         return (currx, curry) != (8, 8);
@@ -72,15 +72,16 @@ impl Board {
      * returns: a list of valid locations of those pieces.
      * 
      */
-    fn valid_origin_points( kind: char,
-                         (kx, ky): (u8, u8), 
+    fn valid_origin_points(&mut self, 
+                            kind: char,
+                        (kx, ky): (u8, u8), 
                        ) -> impl Iterator<Item=(u8, u8)> {
         let gen_vec: Vec<(i8, i8)>;
         let tx = kx as i8;
         let ty = ky as i8;
         match kind {
-            'p'       => gen_vec = vec![(tx, ty+2), (tx, ty+1), (tx+1, ty+1), (tx-1, ty+1)],
-            'P'       => gen_vec = vec![(tx, ty-2), (tx, ty-1), (tx+1, tx-1), (tx-1, ty-1)],
+            'p'       => gen_vec = if self.get_at(kx, ky)==' ' {vec![(tx, ty+2), (tx, ty+1)]} else {vec![(tx+1, ty+1), (tx-1, ty+1)]},
+            'P'       => gen_vec = if self.get_at(kx, ky)==' ' {vec![(tx, ty-2), (tx, ty-1)]} else {vec![(tx+1, ty-1), (tx-1, ty-1)]},
             'r' | 'R' => gen_vec = (0..=7).map(|x| (x, ty)).chain(
                                   (0..=7).map(|y| (tx, y)))
                                   .collect(),
