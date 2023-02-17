@@ -27,7 +27,7 @@ impl Board {
         retval
     }
 
-    pub fn get_at(&self, file: u8, rank: u8) -> char {
+    pub fn get_at(&self, (file, rank): (u8,u8)) -> char {
         self.state[(rank << 3 | file) as usize]
     }
 
@@ -57,7 +57,7 @@ impl Board {
             }
         }
         if (currx, curry) != (8, 8) {
-            self.state[(torank << 3 | tofile) as usize] = self.get_at(currx, curry);
+            self.state[(torank << 3 | tofile) as usize] = self.get_at((currx, curry));
             self.state[(curry << 3 | currx) as usize] = ' ';
         }
         return (currx, curry) != (8, 8);
@@ -80,8 +80,8 @@ impl Board {
         let tx = kx as i8;
         let ty = ky as i8;
         match kind {
-            'p'       => gen_vec = if self.get_at(kx, ky)==' ' {vec![(tx, ty+2), (tx, ty+1)]} else {vec![(tx+1, ty+1), (tx-1, ty+1)]},
-            'P'       => gen_vec = if self.get_at(kx, ky)==' ' {vec![(tx, ty-2), (tx, ty-1)]} else {vec![(tx+1, ty-1), (tx-1, ty-1)]},
+            'p'       => gen_vec = if self.get_at((kx, ky))==' ' {vec![(tx, ty+2), (tx, ty+1)]} else {vec![(tx+1, ty+1), (tx-1, ty+1)]},
+            'P'       => gen_vec = if self.get_at((kx, ky))==' ' {vec![(tx, ty-2), (tx, ty-1)]} else {vec![(tx+1, ty-1), (tx-1, ty-1)]},
             'r' | 'R' => gen_vec = (0..=7).map(|x| (x, ty)).chain(
                                   (0..=7).map(|y| (tx, y)))
                                   .collect(),
