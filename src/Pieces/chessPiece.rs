@@ -10,12 +10,12 @@ mod chessPiece {
         Bishop(Bishop),
     }
 
-    pub struct Pawn   {pos: Square, isWhite: bool, displayChar: char}
-    pub struct Queen  {pos: Square, isWhite: bool, displayChar: char}
-    pub struct King   {pos: Square, isWhite: bool, displayChar: char}
-    pub struct Rook   {pos: Square, isWhite: bool, displayChar: char}
-    pub struct Knight {pos: Square, isWhite: bool, displayChar: char}
-    pub struct Bishop {pos: Square, isWhite: bool, displayChar: char}
+    pub struct Pawn   {pos: Square, isWhite: bool, displayChar: char, hasMoved: bool}
+    pub struct Queen  {pos: Square, isWhite: bool, displayChar: char, hasMoved: bool}
+    pub struct King   {pos: Square, isWhite: bool, displayChar: char, hasMoved: bool}
+    pub struct Rook   {pos: Square, isWhite: bool, displayChar: char, hasMoved: bool}
+    pub struct Knight {pos: Square, isWhite: bool, displayChar: char, hasMoved: bool}
+    pub struct Bishop {pos: Square, isWhite: bool, displayChar: char, hasMoved: bool}
 
     pub trait Piece {
         pub fn getPosition(&self) -> Square;
