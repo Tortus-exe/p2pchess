@@ -1,23 +1,7 @@
-type Square = (u8,u8);
+use crate::Pieces::chessPiece::{Pawn, Piece, Square};
 
-struct pawn   {pos: Square, isWhite: bool, displayChar: char}
-struct queen  {pos: Square, isWhite: bool, displayChar: char}
-struct king   {pos: Square, isWhite: bool, displayChar: char}
-struct rook   {pos: Square, isWhite: bool, displayChar: char}
-struct knight {pos: Square, isWhite: bool, displayChar: char}
-struct bishop {pos: Square, isWhite: bool, displayChar: char}
-
-pub trait chessPiece {
-    pub fn getPosition(&self) -> Square;
-    pub fn requestMoveTo(&self, pos: Square, board: &Board) -> bool;
-    pub fn canMoveTo(&self, pos: &Square, board: &Board) -> bool;
-}
-
-impl chessPiece for pawn {
+impl Piece for Pawn {
     fn getPosition(&self) -> Square {self.pos}
-    fn requestMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {
-        true
-    }
     fn canMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {
         if board.get_at((tx, ty)) == None {
             if self.isWhite {
