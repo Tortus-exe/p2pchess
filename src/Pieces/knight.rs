@@ -1,14 +1,14 @@
 mod Knight {
-    use crate::Pieces::chessPiece::{Knight, Piece, Square};
+    pub use crate::Pieces::chessPiece::{Knight, Piece, Square};
+    use crate::Board::Board;
+
     impl Piece for Knight {
+        fn isWhite(&self) -> bool {self.isWhite}
         fn getPosition(&self) -> Square {self.pos}
-        fn canMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {
-            ix = tx as i8;
-            iy = ty as i8;
-            ipos = self.pos as (i8,i8);
-            possible_moves = vec![(tx+2, ty+1), (tx+2, ty-1), (tx-2, ty+1), (tx-2, ty-1), 
+        fn canMoveTo(&self, &(tx, ty): &Square, _: &Board) -> bool {
+            let possible_moves = vec![(tx+2, ty+1), (tx+2, ty-1), (tx-2, ty+1), (tx-2, ty-1), 
                                   (tx+1, ty+2), (tx-1, ty+2), (tx+1, ty-2), (tx-1, ty-2)];
-            return possible_moves.contains(ipos);
+            return possible_moves.contains(&self.pos);
         }
     }
 }
