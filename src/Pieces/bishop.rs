@@ -30,5 +30,6 @@ impl Piece for Bishop {
             px=px-1;
             py=py+1;
         }
+        return false;
     }
 }

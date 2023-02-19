@@ -1,32 +1,55 @@
-use crate::Pieces::chessPiece::{Pawn, Piece, Square};
+use crate::Pieces::chessPiece::{Queen, Piece, Square};
 
-impl Piece for pawn {
+impl Piece for Queen {
     fn getPosition(&self) -> Square {self.pos}
     fn canMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {
-        if board.get_at((tx, ty)) == None {
-            if self.isWhite {
-                return( ty < 7 &&
-                        tx == self.pos.0 &&
-                        (ty+1 == self.pos.1 ||
-                        (ty==4 && self.pos.1==6)));
-            } else {
-                return( ty > 0 && ty < 8 &&
-                        tx == self.pos.0 &&
-                        (ty-1 == self.pos.1 || 
-                        (ty==3 && self.pos.1==1)));
-            }
+        let mut (px,py) = self.pos;
+        while px < 8 && py < 8 && board.get_at((px,py))==None{
+            if (px,py)==(tx,ty) {return true;}
+            px=px+1;
+            py=py+1;
         }
-        //white and taking
-        if self.isWhite {
-            return( ty < 7 &&
-                    (tx == self.pos.0+1 || 
-                     tx+1==self.pos.0) &&
-                    ty+1== self.pos.1);
-        } else {
-            return( ty > 0 && ty < 8 &&
-                    (tx == self.pos.0+1 ||
-                     tx+1==self.pos.0) &&
-                    ty==self.pos.1+1);
+        (px,py) = self.pos;
+        loop {
+            if (px,py)==(tx,ty) {return true;}
+            if px==0 || py==0 || board.get_at((px,py))!=None {break;}
+            px=px-1;
+            py=py-1;
         }
+        (px,py) = self.pos;
+        loop {
+            if (px,py)==(tx,ty) {return true;}
+            if px==7 || py==0 || board.get_at((px,py))!=None {break;}
+            px=px+1;
+            py=py-1;
+        }
+        (px,py) = self.pos;
+        loop {
+            if (px,py)==(tx,ty) {return true;}
+            if px==0 || py==7 || board.get_at((px,py))!=None {break;}
+            px=px-1;
+            py=py+1;
+        }
+        while py>=0 && board.get_at((px,py)) == None {
+            if (px,py)==(tx,ty) {return true;}
+            py=py-1;
+        }
+        (px,py)=self.pos;
+        while py<8 && board.get_at((px,py))==None {
+            if (px,py)==(tx,ty) {return true;}
+            py=py+1;
+        }
+        (px,py)=self.pos;
+        while px>=0 && board.get_at((px,py)) == None {
+            if (px,px)==(tx,ty) {return true;}
+            px=px-1;
+        }
+        (px,px)=self.pos;
+        while px<8 && board.get_at((px,py))==None {
+            if (px,px)==(tx,ty) {return true;}
+            px=px+1;
+        }
+        return false;
+
     }
 }

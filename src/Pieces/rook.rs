@@ -1,32 +1,28 @@
-use crate::Pieces::chessPiece::{Pawn, Piece, Square};
+use crate::Pieces::chessPiece::{Rook, Piece, Square};
 
-impl Piece for pawn {
+impl Piece for Rook {
     fn getPosition(&self) -> Square {self.pos}
     fn canMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {
-        if board.get_at((tx, ty)) == None {
-            if self.isWhite {
-                return( ty < 7 &&
-                        tx == self.pos.0 &&
-                        (ty+1 == self.pos.1 ||
-                        (ty==4 && self.pos.1==6)));
-            } else {
-                return( ty > 0 && ty < 8 &&
-                        tx == self.pos.0 &&
-                        (ty-1 == self.pos.1 || 
-                        (ty==3 && self.pos.1==1)));
-            }
+        let mut (cx,cy) = self.pos;
+        while cy>=0 && board.get_at((cx,cy)) == None {
+            if (cx,cy)==(tx,ty) {return true;}
+            cy=cy-1;
         }
-        //white and taking
-        if self.isWhite {
-            return( ty < 7 &&
-                    (tx == self.pos.0+1 || 
-                     tx+1==self.pos.0) &&
-                    ty+1== self.pos.1);
-        } else {
-            return( ty > 0 && ty < 8 &&
-                    (tx == self.pos.0+1 ||
-                     tx+1==self.pos.0) &&
-                    ty==self.pos.1+1);
+        (cx,cy)=self.pos;
+        while cy<8 && board.get_at((cx,cy))==None {
+            if (cx,cy)==(tx,ty) {return true;}
+            cy=cy+1;
         }
+        (cx,cy)=self.pos;
+        while cx>=0 && board.get_at((cx,cy)) == None {
+            if (cx,cx)==(tx,ty) {return true;}
+            cx=cx-1;
+        }
+        (cx,cx)=self.pos;
+        while cx<8 && board.get_at((cx,cy))==None {
+            if (cx,cx)==(tx,ty) {return true;}
+            cx=cx+1;
+        }
+        return false;
     }
 }
