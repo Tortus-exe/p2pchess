@@ -1,6 +1,5 @@
-use crate::Pieces::chessPiece::{Rook, Piece, Square};
-
 mod Rook {
+    use crate::Pieces::chessPiece::{Rook, Piece, Square};
     impl Piece for Rook {
         fn getPosition(&self) -> Square {self.pos}
         fn canMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {

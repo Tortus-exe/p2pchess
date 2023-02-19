@@ -1,6 +1,5 @@
-use crate::Pieces::chessPiece::{King, Piece, Square};
-
 mod King {
+    use crate::Pieces::chessPiece::{King, Piece, Square};
     impl Piece for King {
         fn getPosition(&self) -> Square {self.pos}
         fn canMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {

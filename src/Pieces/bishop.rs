@@ -1,6 +1,5 @@
-use crate::Pieces::chessPiece::{Bishop, Piece, Square};
-
 mod Bishop {
+    use crate::Pieces::chessPiece::{Bishop, Piece, Square};
     impl Piece for Bishop {
         fn getPosition(&self) -> Square {}
         fn canMoveTo(&self, &(tx, ty): &Square, &board: &Board) -> bool {
