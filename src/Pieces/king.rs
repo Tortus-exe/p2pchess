@@ -9,6 +9,7 @@ mod King {
             if let Some(p)=board.get_at(&(tx,ty)) {
                 return (tx+1==self.pos.0 || self.pos.0+1==tx) || (ty+1==self.pos.1 || self.pos.1+1==ty) && p.isWhite()!=self.isWhite;
             }
+            return false;
         }
     }
 }
