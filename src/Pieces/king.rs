@@ -1,6 +1,6 @@
-mod King {
-    pub use crate::Pieces::chessPiece::{King, Piece, Square};
-    use crate::Board::Board;
+pub mod King {
+    pub use crate::Pieces::chessPiece::chessPiece::{King, Piece, Square};
+    use crate::board::Board;
 
     impl Piece for King {
         fn isWhite(&self) -> bool {self.isWhite}

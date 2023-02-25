@@ -1,6 +1,6 @@
-mod Bishop {
-    pub use crate::Pieces::chessPiece::{Bishop, Piece, Square};
-    use crate::Board::Board;
+pub mod Bishop {
+    pub use crate::Pieces::chessPiece::chessPiece::{Bishop, Piece, Square};
+    use crate::board::Board;
     
     impl Piece for Bishop {
         fn isWhite(&self)->bool {self.isWhite}

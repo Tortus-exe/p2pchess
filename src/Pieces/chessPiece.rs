@@ -1,5 +1,5 @@
-mod chessPiece {
-    use crate::Board::Board;
+pub mod chessPiece {
+    use crate::board::Board;
     
     pub type Square = (u8,u8);
 

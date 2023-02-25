@@ -14,8 +14,20 @@ use std::{
     time::{Duration, Instant},
     collections::HashMap
 };
-mod chessboard;
-use crate::chessboard::Board;
+// mod chessboard;
+// use crate::chessboard::Board;
+pub mod Pieces;
+pub mod board {
+    use crate::Pieces::{
+        chessPiece::chessPiece::{Square, ChessPiece, Piece},
+        king::King::King,
+        pawn::Pawn::Pawn,
+        knight::Knight::Knight,
+        queen::Queen::Queen,
+        bishop::Bishop::Bishop,
+        rook::Rook::Rook
+    };
+}
 // }}}
 
 // don't change this, it works well.
@@ -30,24 +42,16 @@ fn main() -> Result<()> {
     enable_raw_mode()?; // allows us to get the keypresses without the user having to press "enter"
                         // like in a regular terminal
 
-    let mut board = Board::new(vec![ // TODO: turn this into a macro
-        'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R', 
-        'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 
-        'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 
-        'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'
+    let mut board = Board::new(&[
+        &['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'], 
+        &['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
+        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        &['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
+        &['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
     ]);
-
-    board.move_to('p', true, None, None, (3, 2));
-    board.move_to('p', false, None, None, (3, 4));
-    board.move_to('p', true, None, None, (4, 3));
-    board.move_to('p', false, None, None, (4, 4));
-    board.move_to('n', true, None, None, (5, 2));
-    board.move_to('q', false, None, None, (0, 4));
-    board.move_to('n', true, None, None, (4, 4));
 
     printBoardGrid(
         10, // x pos

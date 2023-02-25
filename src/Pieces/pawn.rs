@@ -1,6 +1,6 @@
-mod Pawn {
-    pub use crate::Pieces::chessPiece::{Pawn, Piece, Square};
-    use crate::Board::Board;
+pub mod Pawn {
+    pub use crate::Pieces::chessPiece::chessPiece::{Pawn, Piece, Square};
+    use crate::board::Board;
     
     impl Piece for Pawn {
         fn isWhite(&self)->bool {self.isWhite}
