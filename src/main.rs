@@ -53,7 +53,7 @@ fn main() -> Result<()> {
     enable_raw_mode()?; // allows us to get the keypresses without the user having to press "enter"
                         // like in a regular terminal
 
-    let mut board = Board::new(&[
+    let board = Board::new(&[
         ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'], 
         ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
@@ -80,25 +80,12 @@ fn main() -> Result<()> {
         15, // x pos
         7,  // y pos
         8,  // num cols
+        8,  // num rows
         6,  // width of each cell
         3,  // height of each cell
-        board, // the board
+        &board, // the board
         Color::White,
-        Color::Black,
-        HashMap::from([
-            ('R', '♜'),
-            ('B', '♝'),
-            ('N', '♞'),
-            ('Q', '♛'),
-            ('K', '♚'),
-            ('P', '♟'),
-            ('r', '♖'),
-            ('b', '♗'),
-            ('n', '♘'),
-            ('q', '♕'),
-            ('k', '♔'),
-            ('p', '♙')
-        ])
+        Color::Black
     )?;
 
     loop {
@@ -119,14 +106,15 @@ fn main() -> Result<()> {
         Show,
         ResetColor
     )?;
+    
     return Ok(());
 }
 
-fn showPieces(x: u16, y: u16, numCols: u8, colWidth: u8, rowHeight: u8, board: Board, COLOR_A: Color, COLOR_B: Color, display_version_of: HashMap<char, char>) -> Result<()> {
-    for row in 0u8..(board.state.len() as u8/numCols) {
+fn showPieces(x: u16, y: u16, numCols: u8, numRows: u8, colWidth: u8, rowHeight: u8, board: &Board, COLOR_A: Color, COLOR_B: Color) -> Result<()> {
+    for row in 0u8..numRows as u8 {
         for col in 0..numCols {
             // let piece = display_version_of.get(&board.state[row*numCols+col]).unwrap_or(&board.state[row*numCols+col]);
-            let piece = if let Some(&c)=board.get_at(&(row, col)) {c.displayChar()} else {' '};
+            let piece = if let Some(&c)=board.get_at(&(col, row)) {c.displayChar()} else {' '};
             execute!(stdout(),
                 MoveTo(x+(col*colWidth) as u16, y+(row*rowHeight) as u16),
                 SetBackgroundColor(if (col+row)%2==0 {COLOR_A} else {COLOR_B}),
