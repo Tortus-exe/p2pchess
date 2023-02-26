@@ -3,6 +3,7 @@ pub mod King {
     use crate::board::Board;
 
     impl Piece for King {
+        fn displayChar(&self)->char{self.displayChar}
         fn isWhite(&self) -> bool {self.isWhite}
         fn getPosition(&self) -> Square {self.pos}
         fn canMoveTo(&self, &(tx, ty): &Square, board: &Board) -> bool {

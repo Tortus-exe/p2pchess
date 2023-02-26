@@ -1,13 +1,13 @@
 // mod chessPiece;
-mod Pieces {
-    mod chessPiece;
-    mod king;
-    mod pawn;
-    mod knight;
-    mod queen;
-    mod bishop;
-    mod rook;
-}
+// mod Pieces {
+//     mod chessPiece;
+//     mod king;
+//     mod pawn;
+//     mod knight;
+//     mod queen;
+//     mod bishop;
+//     mod rook;
+// }
 
 
 use std::collections::HashMap;
@@ -51,7 +51,7 @@ impl Board {
     }
 
     pub fn new(&data: &[[char; 8]; 8]) -> Board{
-        let b = Board {state: HashMap::new()};
+        let mut b = Board {state: HashMap::new()};
 
         for (y,row) in data.iter().enumerate() {
             for (x,p) in row.iter().enumerate() {

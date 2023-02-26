@@ -27,12 +27,24 @@ pub mod chessPiece {
     pub struct Bishop {pub pos: Square, pub isWhite: bool, pub displayChar: char, pub hasMoved: bool}
 
     pub trait Piece {
+        fn displayChar(&self) -> char;
         fn isWhite(&self) -> bool;
         fn getPosition(&self) -> Square;
         fn canMoveTo(&self, pos: &Square, board: &Board) -> bool;
     }
     
     impl Piece for ChessPiece {
+        fn displayChar(&self) -> char {
+            match *self {
+                Self::Pawn(p) => p.displayChar,
+                Self::Queen(p) => p.displayChar,
+                Self::King(p) => p.displayChar,
+                Self::Rook(p) => p.displayChar,
+                Self::Knight(p) => p.displayChar,
+                Self::Bishop(p) => p.displayChar,
+            }
+        }
+
         fn isWhite(&self) -> bool {
             match *self {
                 Self::Pawn(p) => p.isWhite,

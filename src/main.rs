@@ -16,18 +16,29 @@ use std::{
 };
 // mod chessboard;
 // use crate::chessboard::Board;
-pub mod Pieces;
-pub mod board {
-    use crate::Pieces::{
-        chessPiece::chessPiece::{Square, ChessPiece, Piece},
-        king::King::King,
-        pawn::Pawn::Pawn,
-        knight::Knight::Knight,
-        queen::Queen::Queen,
-        bishop::Bishop::Bishop,
-        rook::Rook::Rook
-    };
+mod board;
+use crate::board::Board;
+pub mod Pieces {
+    pub mod chessPiece;
+    pub mod king;
+    pub mod pawn;
+    pub mod knight;
+    pub mod queen;
+    pub mod bishop;
+    pub mod rook;
 }
+use crate::Pieces::chessPiece::chessPiece::Piece;
+// pub mod board {
+//     use crate::Pieces::{
+//         chessPiece::chessPiece::{Square, ChessPiece, Piece},
+//         king::King::King,
+//         pawn::Pawn::Pawn,
+//         knight::Knight::Knight,
+//         queen::Queen::Queen,
+//         bishop::Bishop::Bishop,
+//         rook::Rook::Rook
+//     };
+// }
 // }}}
 
 // don't change this, it works well.
@@ -43,14 +54,14 @@ fn main() -> Result<()> {
                         // like in a regular terminal
 
     let mut board = Board::new(&[
-        &['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'], 
-        &['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
-        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-        &[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-        &['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
-        &['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
+        ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'], 
+        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+        ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
+        ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
     ]);
 
     printBoardGrid(
@@ -111,15 +122,16 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
-fn showPieces(x: u16, y: u16, numCols: usize, colWidth: usize, rowHeight: usize, board: Board, COLOR_A: Color, COLOR_B: Color, display_version_of: HashMap<char, char>) -> Result<()> {
-    for row in 0..(board.state.len()/numCols) {
+fn showPieces(x: u16, y: u16, numCols: u8, colWidth: u8, rowHeight: u8, board: Board, COLOR_A: Color, COLOR_B: Color, display_version_of: HashMap<char, char>) -> Result<()> {
+    for row in 0u8..(board.state.len() as u8/numCols) {
         for col in 0..numCols {
             // let piece = display_version_of.get(&board.state[row*numCols+col]).unwrap_or(&board.state[row*numCols+col]);
+            let piece = if let Some(&c)=board.get_at(&(row, col)) {c.displayChar()} else {' '};
             execute!(stdout(),
                 MoveTo(x+(col*colWidth) as u16, y+(row*rowHeight) as u16),
                 SetBackgroundColor(if (col+row)%2==0 {COLOR_A} else {COLOR_B}),
                 SetForegroundColor(if (col+row)%2==0 {COLOR_B} else {COLOR_A}),
-                Print(display_version_of.get(&board.state[row*numCols+col]).unwrap_or(&board.state[row*numCols+col])),
+                Print(piece),
             )?;
         }
     }

@@ -3,6 +3,7 @@ pub mod Knight {
     use crate::board::Board;
 
     impl Piece for Knight {
+        fn displayChar(&self)->char{self.displayChar}
         fn isWhite(&self) -> bool {self.isWhite}
         fn getPosition(&self) -> Square {self.pos}
         fn canMoveTo(&self, &(tx, ty): &Square, _: &Board) -> bool {
