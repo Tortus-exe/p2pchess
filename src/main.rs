@@ -91,6 +91,8 @@ fn main() -> Result<()> {
         Color::Black
     )?;
 
+    drawInputBox(2,1)?;
+
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
@@ -114,6 +116,21 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
+// drawInputBox {{{
+fn drawInputBox(x: u16, y: u16) -> Result<()> {
+    execute!(stdout(),
+        MoveTo(x,y),
+        Print("╭───────╮"),
+        MoveTo(x,y+1),
+        Print("│       │"),
+        MoveTo(x,y+2),
+        Print("╰───────╯")
+    )?;
+    stdout().flush();
+    Ok(())
+}
+// }}}
+// showPieces {{{
 fn showPieces(x: u16, y: u16, numCols: u8, numRows: u8, colWidth: u8, rowHeight: u8, board: &Board, COLOR_A: Color, COLOR_B: Color) -> Result<()> {
     for row in 0u8..numRows as u8 {
         for col in 0..numCols {
@@ -124,6 +141,7 @@ fn showPieces(x: u16, y: u16, numCols: u8, numRows: u8, colWidth: u8, rowHeight:
                 SetBackgroundColor(if (col+row)%2==0 {COLOR_A} else {COLOR_B}),
                 SetForegroundColor(if (col+row)%2==0 {COLOR_B} else {COLOR_A}),
                 Print(piece),
+                ResetColor
             )?;
         }
     }
@@ -131,6 +149,7 @@ fn showPieces(x: u16, y: u16, numCols: u8, numRows: u8, colWidth: u8, rowHeight:
     stdout().flush();
     Ok(())
 }
+// }}}
 // board printing {{{
 fn printBoardGrid(x: u16, 
                   y: u16, 
