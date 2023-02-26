@@ -1,14 +1,14 @@
-pub mod Pawn {
-    pub use crate::Pieces::chessPiece::chessPiece::{Pawn, Piece, Square};
+pub mod pawn {
+    pub use crate::pieces::chess_piece::chess_piece::{Pawn, Piece, Square};
     use crate::board::Board;
     
     impl Piece for Pawn {
-        fn displayChar(&self)->char{self.displayChar}
-        fn isWhite(&self)->bool {self.isWhite}
-        fn getPosition(&self) -> Square {self.pos}
-        fn canMoveTo(&self, &(tx, ty): &Square, board: &Board) -> bool {
+        fn display_char(&self)->char{self.display_char}
+        fn is_white(&self)->bool {self.is_white}
+        fn get_position(&self) -> Square {self.pos}
+        fn can_move_to(&self, &(tx, ty): &Square, board: &Board) -> bool {
             if board.get_at(&(tx, ty)) == None {
-                if self.isWhite {
+                if self.is_white {
                     return  ty < 7 &&
                             tx == self.pos.0 &&
                             (ty+1==self.pos.1 ||
@@ -22,10 +22,10 @@ pub mod Pawn {
             }
             //white and taking
             let target_piece_is_white: bool = match board.get_at(&(tx,ty)) {
-                Some(&p) => p.isWhite(),
-                None    => !self.isWhite,
+                Some(&p) => p.is_white(),
+                None    => !self.is_white,
             };
-            if self.isWhite {
+            if self.is_white {
                 return  ty < 7 &&
                         (tx == self.pos.0+1 || 
                          tx+1==self.pos.0) &&

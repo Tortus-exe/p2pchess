@@ -1,4 +1,4 @@
-pub mod chessPiece;
+pub mod chess_piece;
 pub mod bishop;
 pub mod pawn;
 pub mod rook;

@@ -1,18 +1,18 @@
-pub mod Rook {
-    pub use crate::Pieces::chessPiece::chessPiece::{Rook, Piece, Square};
+pub mod rook {
+    pub use crate::pieces::chess_piece::chess_piece::{Rook, Piece, Square};
     use crate::board::Board;
 
     impl Piece for Rook {
-        fn displayChar(&self)->char{self.displayChar}
-        fn isWhite(&self) -> bool {self.isWhite}
-        fn getPosition(&self) -> Square {self.pos}
-        fn canMoveTo(&self, &(tx, ty): &Square, board: &Board) -> bool {
+        fn display_char(&self)->char{self.display_char}
+        fn is_white(&self) -> bool {self.is_white}
+        fn get_position(&self) -> Square {self.pos}
+        fn can_move_to(&self, &(tx, ty): &Square, board: &Board) -> bool {
             let (mut px,mut py) = self.pos;
             while py>0 {
                 if (px,py)==(tx,ty) {return true;}
                 py=py-1;
                 if let Some(p)=board.get_at(&(px,py)) {
-                    if p.isWhite()!=self.isWhite && (px,py)==(tx,ty){
+                    if p.is_white()!=self.is_white && (px,py)==(tx,ty){
                         return true;
                     }
                 }
@@ -23,7 +23,7 @@ pub mod Rook {
                 if (px,py)==(tx,ty) {return true;}
                 py=py+1;
                 if let Some(p)=board.get_at(&(px,py)) {
-                    if p.isWhite()!=self.isWhite && (px,py)==(tx,ty){
+                    if p.is_white()!=self.is_white && (px,py)==(tx,ty){
                         return true;
                     }
                 }
@@ -34,7 +34,7 @@ pub mod Rook {
                 if (px,px)==(tx,ty) {return true;}
                 px=px-1;
                 if let Some(p)=board.get_at(&(px,py)) {
-                    if p.isWhite()!=self.isWhite && (px,py)==(tx,ty){
+                    if p.is_white()!=self.is_white && (px,py)==(tx,ty){
                         return true;
                     }
                 }
@@ -45,7 +45,7 @@ pub mod Rook {
                 if (px,px)==(tx,ty) {return true;}
                 px=px+1;
                 if let Some(p)=board.get_at(&(px,py)) {
-                    if p.isWhite()!=self.isWhite && (px,py)==(tx,ty){
+                    if p.is_white()!=self.is_white && (px,py)==(tx,ty){
                         return true;
                     }
                 }

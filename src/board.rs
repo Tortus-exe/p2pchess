@@ -11,14 +11,14 @@
 
 
 use std::collections::HashMap;
-use crate::Pieces::{
-    chessPiece::chessPiece::{Square, ChessPiece, Piece},
-    king::King::King,
-    pawn::Pawn::Pawn,
-    knight::Knight::Knight,
-    queen::Queen::Queen,
-    bishop::Bishop::Bishop,
-    rook::Rook::Rook
+use crate::pieces::{
+    chess_piece::chess_piece::{Square, ChessPiece, Piece},
+    king::king::King,
+    pawn::pawn::Pawn,
+    knight::knight::Knight,
+    queen::queen::Queen,
+    bishop::bishop::Bishop,
+    rook::rook::Rook
 };
 
 pub struct Board {
@@ -32,21 +32,21 @@ impl Board {
     //     }
     // }
 
-    fn insertCharToPiece(key: char, loc: Square, disp: char) -> ChessPiece {
+    fn insert_char_to_piece(key: char, loc: Square, disp: char) -> ChessPiece {
         match key {
-            'P' => ChessPiece::Pawn(Pawn{pos:loc, isWhite:false,displayChar:disp,hasMoved:false,}),
-            'B' => ChessPiece::Bishop(Bishop{pos:loc, isWhite:false,displayChar:disp,hasMoved:false,}),
-            'N' => ChessPiece::Knight(Knight{pos:loc, isWhite:false,displayChar:disp,hasMoved:false,}),
-            'Q' => ChessPiece::Queen(Queen{pos:loc, isWhite:false,displayChar:disp,hasMoved:false,}),
-            'R' => ChessPiece::Rook(Rook{pos:loc, isWhite:false,displayChar:disp,hasMoved:false,}),
-            'K' => ChessPiece::King(King{pos:loc, isWhite:false,displayChar:disp,hasMoved:false,}),
-            'p' => ChessPiece::Pawn(Pawn{pos:loc, isWhite:true,displayChar:disp,hasMoved:false,}),
-            'b' => ChessPiece::Bishop(Bishop{pos:loc, isWhite:true,displayChar:disp,hasMoved:false,}),
-            'n' => ChessPiece::Knight(Knight{pos:loc, isWhite:true,displayChar:disp,hasMoved:false,}),
-            'q' => ChessPiece::Queen(Queen{pos:loc, isWhite:true,displayChar:disp,hasMoved:false,}),
-            'r' => ChessPiece::Rook(Rook{pos:loc, isWhite:true,displayChar:disp,hasMoved:false,}),
-            'k' => ChessPiece::King(King{pos:loc, isWhite:true,displayChar:disp,hasMoved:false,}),
-            _ => ChessPiece::Pawn(Pawn{pos:loc, isWhite:true,displayChar:disp,hasMoved:false,}),
+            'P' => ChessPiece::Pawn(Pawn{pos:loc, is_white:false,display_char:disp,has_moved:false,}),
+            'B' => ChessPiece::Bishop(Bishop{pos:loc, is_white:false,display_char:disp,has_moved:false,}),
+            'N' => ChessPiece::Knight(Knight{pos:loc, is_white:false,display_char:disp,has_moved:false,}),
+            'Q' => ChessPiece::Queen(Queen{pos:loc, is_white:false,display_char:disp,has_moved:false,}),
+            'R' => ChessPiece::Rook(Rook{pos:loc, is_white:false,display_char:disp,has_moved:false,}),
+            'K' => ChessPiece::King(King{pos:loc, is_white:false,display_char:disp,has_moved:false,}),
+            'p' => ChessPiece::Pawn(Pawn{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
+            'b' => ChessPiece::Bishop(Bishop{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
+            'n' => ChessPiece::Knight(Knight{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
+            'q' => ChessPiece::Queen(Queen{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
+            'r' => ChessPiece::Rook(Rook{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
+            'k' => ChessPiece::King(King{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
+            _ => ChessPiece::Pawn(Pawn{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
         }
     }
 
@@ -58,16 +58,16 @@ impl Board {
                 if *p != ' ' {
                     let rx = x.try_into().unwrap();
                     let ry = y.try_into().unwrap();
-                    b.state.insert((rx,ry), Self::insertCharToPiece(*p, (rx,ry), *p));
+                    b.state.insert((rx,ry), Self::insert_char_to_piece(*p, (rx,ry), *p));
                 }
             }
         }
         b
     }
 
-    pub fn requestMove(&mut self, &(fx, fy): &Square, &(tx,ty): &Square) -> bool {
+    pub fn request_move(&mut self, &(fx, fy): &Square, &(tx,ty): &Square) -> bool {
         if let Some(&piece) = self.get_at(&(fx,fy)) {
-            if piece.canMoveTo(&(tx,ty), &self) {
+            if piece.can_move_to(&(tx,ty), &self) {
                 //let taken_piece = 
                 self.state.insert((tx, ty), piece);
                 self.state.remove(&(fx,fy));

@@ -3,23 +3,20 @@
 use crossterm::{
     event::{Event, KeyCode, KeyEvent, KeyModifiers, read},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen, Clear, ClearType},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     style::{Color, Print, ResetColor, SetBackgroundColor, SetForegroundColor},
-    ExecutableCommand, Result, 
+    Result, 
     cursor::{MoveTo, Show, Hide}
 };
 use std::{
-    error::Error,
     io::{stdout, Write},
-    time::{Duration, Instant},
-    collections::HashMap
 };
 // mod chessboard;
 // use crate::chessboard::Board;
 mod board;
 use crate::board::Board;
-pub mod Pieces {
-    pub mod chessPiece;
+pub mod pieces {
+    pub mod chess_piece;
     pub mod king;
     pub mod pawn;
     pub mod knight;
@@ -27,7 +24,7 @@ pub mod Pieces {
     pub mod bishop;
     pub mod rook;
 }
-use crate::Pieces::chessPiece::chessPiece::Piece;
+use crate::pieces::chess_piece::chess_piece::Piece;
 // pub mod board {
 //     use crate::Pieces::{
 //         chessPiece::chessPiece::{Square, ChessPiece, Piece},
@@ -64,7 +61,7 @@ fn main() -> Result<()> {
         ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
     ]);
 
-    printBoardGrid(
+    print_board_grid(
         10, // x pos
         5,  // y pos
         8,  // num rows vertically
@@ -77,9 +74,9 @@ fn main() -> Result<()> {
         Color::Black, 
         Color::Rgb{r:117, g:83, b:24})?;
 
-    board.requestMove(&(1,1), &(1,3));
+    board.request_move(&(1,1), &(1,3));
 
-    showPieces(
+    show_pieces(
         15, // x pos
         7,  // y pos
         8,  // num cols
@@ -91,7 +88,7 @@ fn main() -> Result<()> {
         Color::Black
     )?;
 
-    drawInputBox(2,1)?;
+    draw_input_box(2,1)?;
 
 
     loop {
@@ -116,8 +113,8 @@ fn main() -> Result<()> {
     return Ok(());
 }
 
-// drawInputBox {{{
-fn drawInputBox(x: u16, y: u16) -> Result<()> {
+// draw_input_box {{{
+fn draw_input_box(x: u16, y: u16) -> Result<()> {
     execute!(stdout(),
         MoveTo(x,y),
         Print("╭───────╮"),
@@ -126,48 +123,48 @@ fn drawInputBox(x: u16, y: u16) -> Result<()> {
         MoveTo(x,y+2),
         Print("╰───────╯")
     )?;
-    stdout().flush();
+    stdout().flush()?;
     Ok(())
 }
 // }}}
-// showPieces {{{
-fn showPieces(x: u16, y: u16, numCols: u8, numRows: u8, colWidth: u8, rowHeight: u8, board: &Board, COLOR_A: Color, COLOR_B: Color) -> Result<()> {
-    for row in 0u8..numRows as u8 {
-        for col in 0..numCols {
-            // let piece = display_version_of.get(&board.state[row*numCols+col]).unwrap_or(&board.state[row*numCols+col]);
-            let piece = if let Some(&c)=board.get_at(&(col, row)) {c.displayChar()} else {' '};
+// show_pieces {{{
+fn show_pieces(x: u16, y: u16, num_cols: u8, num_rows: u8, column_width: u8, row_height: u8, board: &Board, color_a: Color, color_b: Color) -> Result<()> {
+    for row in 0u8..num_rows as u8 {
+        for col in 0..num_cols {
+            // let piece = display_version_of.get(&board.state[row*num_cols+col]).unwrap_or(&board.state[row*num_cols+col]);
+            let piece = if let Some(&c)=board.get_at(&(col, row)) {c.display_char()} else {' '};
             execute!(stdout(),
-                MoveTo(x+(col*colWidth) as u16, y+(row*rowHeight) as u16),
-                SetBackgroundColor(if (col+row)%2==0 {COLOR_A} else {COLOR_B}),
-                SetForegroundColor(if (col+row)%2==0 {COLOR_B} else {COLOR_A}),
+                MoveTo(x+(col*column_width) as u16, y+(row*row_height) as u16),
+                SetBackgroundColor(if (col+row)%2==0 {color_a} else {color_b}),
+                SetForegroundColor(if (col+row)%2==0 {color_b} else {color_a}),
                 Print(piece),
                 ResetColor
             )?;
         }
     }
 
-    stdout().flush();
+    stdout().flush()?;
     Ok(())
 }
 // }}}
 // board printing {{{
-fn printBoardGrid(x: u16, 
+fn print_board_grid(x: u16, 
                   y: u16, 
                   numrows: usize, 
                   numcols: usize, 
                   cellwidth: usize, 
                   cellheight: usize,
-                  fileLabels: String, 
-                  rankLabels: String,
-                  COLOR_A: Color,
-                  COLOR_B: Color, 
-                  BORDERCOLOR: Color
+                  file_labels: String, 
+                  rank_labels: String,
+                  color_a: Color,
+                  color_b: Color, 
+                  border_color: Color
                   ) -> Result<()> {
 
     //display the top border
     execute!(stdout(), 
         MoveTo(x,y), 
-        SetBackgroundColor(BORDERCOLOR), 
+        SetBackgroundColor(border_color), 
         Print(format!("{: <1$}\n\r", "", 4+cellwidth*numcols)),
         ResetColor,
         Print(format!("{: <1$}", "", x as usize))
@@ -176,20 +173,20 @@ fn printBoardGrid(x: u16,
     //loop through every rank and draw each row of the board
     for rank in 0..(numrows*cellheight) {
         execute!(stdout(),
-            SetBackgroundColor(BORDERCOLOR),
-            Print(format!("{} ", if rank%cellheight==cellheight/2 {fileLabels.chars().nth(rank/cellheight).unwrap()} else {' '})),
+            SetBackgroundColor(border_color),
+            Print(format!("{} ", if rank%cellheight==cellheight/2 {file_labels.chars().nth(rank/cellheight).unwrap()} else {' '})),
         )?;
         for file in 0..numcols {
             execute!(stdout(),
                 SetBackgroundColor(
-                    if (rank/cellheight + file)%2==0 {COLOR_A} 
-                    else {COLOR_B}
+                    if (rank/cellheight + file)%2==0 {color_a} 
+                    else {color_b}
                 ),
                 Print(format!("{: <1$}", "", cellwidth)),
             )?;
         }
         execute!(stdout(), 
-            SetBackgroundColor(BORDERCOLOR),
+            SetBackgroundColor(border_color),
             Print("  "),
             ResetColor,
             Print(format!("\n\r{: <1$}", "", x as usize))
@@ -198,13 +195,13 @@ fn printBoardGrid(x: u16,
 
     //draw the final border with the legends
     execute!(stdout(), 
-        SetBackgroundColor(BORDERCOLOR), 
+        SetBackgroundColor(border_color), 
         Print("  ")
     )?;
     for column in 0..numcols {
         execute!(stdout(),
             Print(format!("{: <1$}", "", cellwidth/2)),
-            Print(format!("{}", rankLabels.chars().nth(column).unwrap())),
+            Print(format!("{}", rank_labels.chars().nth(column).unwrap())),
             Print(format!("{: <1$}", "", cellwidth/2-1))
         )?;
     }
