@@ -53,7 +53,7 @@ fn main() -> Result<()> {
     enable_raw_mode()?; // allows us to get the keypresses without the user having to press "enter"
                         // like in a regular terminal
 
-    let board = Board::new(&[
+    let mut board = Board::new(&[
         ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'], 
         ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], 
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
@@ -76,6 +76,9 @@ fn main() -> Result<()> {
         Color::White, 
         Color::Black, 
         Color::Rgb{r:117, g:83, b:24})?;
+
+    board.requestMove(&(1,1), &(1,3));
+
     showPieces(
         15, // x pos
         7,  // y pos
@@ -87,6 +90,7 @@ fn main() -> Result<()> {
         Color::White,
         Color::Black
     )?;
+
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
