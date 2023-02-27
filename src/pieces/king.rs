@@ -6,9 +6,11 @@ pub mod king {
         fn display_char(&self)->char{self.display_char}
         fn is_white(&self) -> bool {self.is_white}
         fn get_position(&self) -> Square {self.pos}
-        fn can_move_to(&self, &(tx, ty): &Square, board: &Board) -> bool {
+        fn can_move_to(&mut self, &(tx, ty): &Square, board: &Board) -> bool {
             if let Some(p)=board.get_at(&(tx,ty)) {
-                return p.is_white()!=self.is_white && ((tx+1==self.pos.0 || self.pos.0+1==tx) || (ty+1==self.pos.1 || self.pos.1+1==ty));
+                let check = p.is_white()!=self.is_white && ((tx+1==self.pos.0 || self.pos.0+1==tx) || (ty+1==self.pos.1 || self.pos.1+1==ty));
+                self.has_moved |= check;
+                return check;
             }
             return false;
         }

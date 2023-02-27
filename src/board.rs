@@ -48,8 +48,8 @@ impl Board {
     }
 
     pub fn request_move(&mut self, &(fx, fy): &Square, &(tx,ty): &Square) -> bool {
-        if let Some(&piece) = self.get_at(&(fx,fy)) {
-            if piece.can_move_to(&(tx,ty), &self) {
+        if let Some(&mut mut piece) = self.state.get_mut(&(fx,fy)) {
+            if piece.can_move_to(&(tx,ty), self) {
                 //let taken_piece = 
                 self.state.insert((tx, ty), piece);
                 self.state.remove(&(fx,fy));

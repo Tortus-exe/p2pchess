@@ -6,7 +6,7 @@ pub mod pawn {
         fn display_char(&self)->char{self.display_char}
         fn is_white(&self)->bool {self.is_white}
         fn get_position(&self) -> Square {self.pos}
-        fn can_move_to(&self, &(tx, ty): &Square, board: &Board) -> bool {
+        fn can_move_to(&mut self, &(tx, ty): &Square, board: &Board) -> bool {
             if board.get_at(&(tx, ty)) == None {
                 if self.is_white {
                     return  ty < 7 &&
