@@ -1,15 +1,3 @@
-// mod chessPiece;
-// mod Pieces {
-//     mod chessPiece;
-//     mod king;
-//     mod pawn;
-//     mod knight;
-//     mod queen;
-//     mod bishop;
-//     mod rook;
-// }
-
-
 use std::collections::HashMap;
 use crate::pieces::{
     chess_piece::chess_piece::{Square, ChessPiece, Piece},
@@ -26,12 +14,6 @@ pub struct Board {
 }
 
 impl Board {
-    // pub fn new() -> Board {
-    //     Board {
-    //         state: HashMap::new(),
-    //     }
-    // }
-
     fn insert_char_to_piece(key: char, loc: Square, disp: char) -> ChessPiece {
         match key {
             'P' => ChessPiece::Pawn(Pawn{pos:loc, is_white:false,display_char:disp,has_moved:false,}),

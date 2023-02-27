@@ -24,7 +24,9 @@ pub mod pieces {
     pub mod bishop;
     pub mod rook;
 }
+pub mod inputbox;
 use crate::pieces::chess_piece::chess_piece::Piece;
+use crate::inputbox::inputbox::InputBox;
 // pub mod board {
 //     use crate::Pieces::{
 //         chessPiece::chessPiece::{Square, ChessPiece, Piece},
@@ -60,6 +62,7 @@ fn main() -> Result<()> {
         ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
         ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
     ]);
+    let mut ibox = InputBox::new(7);
 
     print_board_grid(
         10, // x pos
@@ -88,18 +91,19 @@ fn main() -> Result<()> {
         Color::Black
     )?;
 
-    draw_input_box(2,1)?;
-
+    draw_input_box(2,1, &ibox)?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
-        match read()? {
-            Event::Key(KeyEvent{
-                code: KeyCode::Char('q'),
-                modifiers: KeyModifiers::NONE, ..
-            }) => break,
-            _ => (),
+        if let Event::Key(KeyEvent{code: c, modifiers: m, ..})=read()? {
+            match (c, m) {
+                (KeyCode::Char('q'), KeyModifiers::NONE) => break,
+                (KeyCode::Backspace, _) => drop(ibox.delete()),
+                (KeyCode::Char(x), KeyModifiers::NONE) => drop(ibox.append(x)),
+                _ => ()
+            }
         }
+        draw_input_box(2,1, &ibox)?;
     }
 
     disable_raw_mode()?;
@@ -114,14 +118,14 @@ fn main() -> Result<()> {
 }
 
 // draw_input_box {{{
-fn draw_input_box(x: u16, y: u16) -> Result<()> {
+fn draw_input_box(x: u16, y: u16, i: &InputBox) -> Result<()> {
     execute!(stdout(),
         MoveTo(x,y),
-        Print("╭───────╮"),
+        Print(format!("╭{:─<1$}╮", "", i.max_size)),
         MoveTo(x,y+1),
-        Print("│       │"),
+        Print(format!("│{: <1$}│", i.contents, i.max_size)),
         MoveTo(x,y+2),
-        Print("╰───────╯")
+        Print(format!("╰{:─<1$}╯", "", i.max_size))
     )?;
     stdout().flush()?;
     Ok(())
