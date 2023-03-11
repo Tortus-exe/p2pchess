@@ -1,4 +1,6 @@
 pub mod inputbox {
+    use crate::board::Board;
+
     pub struct InputBox {
         pub contents: String,
         pub max_size: usize
@@ -19,6 +21,14 @@ pub mod inputbox {
 
         pub fn delete(&mut self) -> bool {
             matches!(self.contents.pop(), Some(_))
+        }
+
+        pub fn request_to_board(&mut self, board: &mut Board) {
+            match self.contents.to_lowercase().as_str() {
+                "o-o-o" => board.request_castle_queenside(false),
+                _ => false
+            };
+            self.contents = String::from("");
         }
     }
 }

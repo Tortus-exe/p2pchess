@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use hashbrown::HashMap;
 use crate::pieces::{
     chess_piece::chess_piece::{Square, ChessPiece, Piece},
     king::king::King,
@@ -57,8 +57,36 @@ impl Board {
         }
         return false;
     }
+
+    pub fn request_castle_queenside(&mut self, is_white: bool) -> bool {
+        let y = if is_white {0} else {7};
+        let mut move_signal = false;
+
+        if self.state.contains_key(&(0,y)) &&
+           !self.state.contains_key(&(1,y)) &&
+           !self.state.contains_key(&(2,y)) &&
+           !self.state.contains_key(&(3,y)) &&
+           self.state.contains_key(&(4,y))
+        {
+            if let Some([ChessPiece::King(king), ChessPiece::Rook(rook)]) = self.state.get_many_mut([&(4,y), &(0,y)]) {
+                if  !king.has_moved && !rook.has_moved {
+                    move_signal = true;
+                }
+            }
+        }
+
+        if move_signal {
+            if let Some(k) = self.state.remove(&(4,y)){
+                self.state.insert((2,y), k);
+            }
+            if let Some(r) = self.state.remove(&(0,y)) {
+                self.state.insert((3,y), r);
+            }
+        }
+        false
+    }
     
     pub fn get_at(&self, sqr: &Square) -> Option<&ChessPiece> {
-        return self.state.get(&sqr);
+        return self.state.get(&*sqr);
     }
 }
