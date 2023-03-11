@@ -3,7 +3,7 @@
 use crossterm::{
     event::{Event, KeyCode, KeyEvent, KeyModifiers, read},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen, size, Clear, ClearType::All},
     style::{Color, Print, ResetColor, SetBackgroundColor, SetForegroundColor},
     Result, 
     cursor::{MoveTo, Show, Hide}
@@ -11,6 +11,7 @@ use crossterm::{
 use std::{
     io::{stdout, Write},
 };
+use core::cmp::min;
 // mod chessboard;
 // use crate::chessboard::Board;
 mod board;
@@ -40,7 +41,6 @@ use crate::inputbox::inputbox::InputBox;
 // }
 // }}}
 
-// don't change this, it works well.
 fn main() -> Result<()> {
     execute!(
         stdout(),
@@ -51,6 +51,11 @@ fn main() -> Result<()> {
     )?;
     enable_raw_mode()?; // allows us to get the keypresses without the user having to press "enter"
                         // like in a regular terminal
+
+    let mut board_size_multiplier: usize = {
+        let (x,y) = size()?;
+        (min(x,y)/10).into()
+    };
 
     let mut board = Board::new(&[
         ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'], 
@@ -64,46 +69,54 @@ fn main() -> Result<()> {
     ]);
     let mut ibox = InputBox::new(7);
 
+    board.request_move(&(1,1), &(1,3));
+
     print_board_grid(
-        10, // x pos
-        5,  // y pos
+        0, // x pos
+        0,  // y pos
         8,  // num rows vertically
         8,  // num columns horizontally
-        6,  // width of each cell
-        3,  // height of each cell
+        2*board_size_multiplier,  // width of each cell
+        1*board_size_multiplier,  // height of each cell
         "ABCDEFGH".to_string(), 
         "12345678".to_string(), 
         Color::White, 
         Color::Black, 
         Color::Rgb{r:117, g:83, b:24})?;
 
-    board.request_move(&(1,1), &(1,3));
-
     show_pieces(
-        15, // x pos
-        7,  // y pos
+        3+(board_size_multiplier as u16)/2, // x pos
+        1+(board_size_multiplier as u16)/2,  // y pos
         8,  // num cols
         8,  // num rows
-        6,  // width of each cell
-        3,  // height of each cell
+        2*board_size_multiplier,  // width of each cell
+        1*board_size_multiplier,  // height of each cell
         &board, // the board
         Color::White,
         Color::Black
     )?;
 
-    draw_input_box(2,1, &ibox)?;
+    draw_input_box(52,0, &ibox)?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
-        if let Event::Key(KeyEvent{code: c, modifiers: m, ..})=read()? {
+        let event=read()?;
+        if let Event::Key(KeyEvent{code: c, modifiers: m, ..})=event {
             match (c, m) {
                 (KeyCode::Char('q'), KeyModifiers::NONE) => break,
                 (KeyCode::Backspace, _) => drop(ibox.delete()),
                 (KeyCode::Char(x), KeyModifiers::NONE) => drop(ibox.append(x)),
+                (KeyCode::Char(x), KeyModifiers::SHIFT) => drop(ibox.append(x)),
                 _ => ()
             }
         }
-        draw_input_box(2,1, &ibox)?;
+        if let Event::Resize(x,y)=event{
+            execute!(stdout(), Clear(All))?;
+            board_size_multiplier = (min(x,y)/10).into();
+            print_board_grid(0, 0, 8, 8, 2*board_size_multiplier, 1*board_size_multiplier, "ABCDEFGH".to_string(), "12345678".to_string(), Color::White, Color::Black, Color::Rgb{r:117, g:83, b:24})?;
+        }
+        show_pieces(3+(board_size_multiplier as u16)/2, 1+(board_size_multiplier as u16)/2, 8, 8, 2*board_size_multiplier, 1*board_size_multiplier, &board, Color::White, Color::Black)?;
+        draw_input_box(52,0, &ibox)?;
     }
 
     disable_raw_mode()?;
@@ -132,13 +145,13 @@ fn draw_input_box(x: u16, y: u16, i: &InputBox) -> Result<()> {
 }
 // }}}
 // show_pieces {{{
-fn show_pieces(x: u16, y: u16, num_cols: u8, num_rows: u8, column_width: u8, row_height: u8, board: &Board, color_a: Color, color_b: Color) -> Result<()> {
+fn show_pieces(x: u16, y: u16, num_cols: u8, num_rows: u8, column_width: usize, row_height: usize, board: &Board, color_a: Color, color_b: Color) -> Result<()> {
     for row in 0u8..num_rows as u8 {
         for col in 0..num_cols {
             // let piece = display_version_of.get(&board.state[row*num_cols+col]).unwrap_or(&board.state[row*num_cols+col]);
             let piece = if let Some(&c)=board.get_at(&(col, row)) {c.display_char()} else {' '};
             execute!(stdout(),
-                MoveTo(x+(col*column_width) as u16, y+(row*row_height) as u16),
+                MoveTo(x+(col as usize*column_width) as u16, y+(row as usize*row_height) as u16),
                 SetBackgroundColor(if (col+row)%2==0 {color_a} else {color_b}),
                 SetForegroundColor(if (col+row)%2==0 {color_b} else {color_a}),
                 Print(piece),
