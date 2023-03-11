@@ -96,7 +96,7 @@ fn main() -> Result<()> {
         Color::Black
     )?;
 
-    draw_input_box(52,0, &ibox)?;
+    draw_input_box(4+(board_size_multiplier as u16*16),0, &ibox)?;
 
     loop {
         execute!(stdout(), MoveTo(0, 0))?;
@@ -116,7 +116,7 @@ fn main() -> Result<()> {
             print_board_grid(0, 0, 8, 8, 2*board_size_multiplier, 1*board_size_multiplier, "ABCDEFGH".to_string(), "12345678".to_string(), Color::White, Color::Black, Color::Rgb{r:117, g:83, b:24})?;
         }
         show_pieces(3+(board_size_multiplier as u16)/2, 1+(board_size_multiplier as u16)/2, 8, 8, 2*board_size_multiplier, 1*board_size_multiplier, &board, Color::White, Color::Black)?;
-        draw_input_box(52,0, &ibox)?;
+        draw_input_box(4+(board_size_multiplier as u16*16),0, &ibox)?;
     }
 
     disable_raw_mode()?;
