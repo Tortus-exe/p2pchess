@@ -6,7 +6,8 @@ pub mod queen {
         fn display_char(&self)->char{self.display_char}
         fn is_white(&self) -> bool {self.is_white}
         fn get_position(&self) -> Square {self.pos}
-        fn can_move_to(&mut self, &(tx, ty): &Square, board: &Board) -> bool {
+        fn set_position(&mut self, &p: &Square) {self.pos = p;}
+        fn can_move_to(&self, &(tx, ty): &Square, board: &Board) -> bool {
             let (mut px,mut py) = self.pos;
             while px < 8 && py < 8 {
                 if let Some(p)=board.get_at(&(px,py)) {

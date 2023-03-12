@@ -1,3 +1,5 @@
+// vim:foldmethod=marker
+
 use hashbrown::HashMap;
 use crate::pieces::{
     chess_piece::chess_piece::{Square, ChessPiece, Piece},
@@ -47,17 +49,39 @@ impl Board {
         b
     }
 
-    pub fn request_move(&mut self, &(fx, fy): &Square, &(tx,ty): &Square) -> bool {
-        if let Some(&mut mut piece) = self.state.get_mut(&(fx,fy)) {
+    pub fn request_move(&mut self, target_piece: char, &(tx,ty): &Square) -> bool {
+        let mut origin: Square = (9,9);
+        for (loc, piece) in self.state.iter() {
+            if (*piece).can_move_to(&(tx,ty), self) {
+                let piece_matches = match piece {
+                    ChessPiece::Pawn(_) => target_piece == 'p',
+                    ChessPiece::Queen(_) => target_piece == 'q',
+                    ChessPiece::Rook(_) => target_piece == 'r',
+                    ChessPiece::King(_) => target_piece == 'k',
+                    ChessPiece::Bishop(_) => target_piece == 'b',
+                    ChessPiece::Knight(_) => target_piece == 'n',
+                };
+                if piece_matches && origin==(9,9){
+                    origin = *loc;
+                } else if piece_matches && origin != (9,9) {
+                    return false;
+                }
+            }
+        }
+        if origin==(9,9) {return false;}
+
+        if let Some(&mut mut piece) = self.state.get_mut(&origin) {
             if piece.can_move_to(&(tx,ty), self) {
-                //let taken_piece = 
+                piece.set_position(&(tx,ty));
                 self.state.insert((tx, ty), piece);
-                self.state.remove(&(fx,fy));
+                self.state.remove(&origin);
+                return true;
             }
         }
         return false;
     }
 
+// CASTLING {{{
     pub fn request_castle_kingside(&mut self, is_white: bool) -> bool {
         let y = if is_white {0} else {7};
         let mut move_signal = false;
@@ -113,4 +137,5 @@ impl Board {
     pub fn get_at(&self, sqr: &Square) -> Option<&ChessPiece> {
         return self.state.get(&*sqr);
     }
+//}}}
 }

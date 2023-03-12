@@ -30,7 +30,8 @@ pub mod chess_piece {
         fn display_char(&self) -> char;
         fn is_white(&self) -> bool;
         fn get_position(&self) -> Square;
-        fn can_move_to(&mut self, pos: &Square, board: &Board) -> bool;
+        fn set_position(&mut self, pos: &Square);
+        fn can_move_to(&self, pos: &Square, board: &Board) -> bool;
     }
     
     impl Piece for ChessPiece {
@@ -66,8 +67,19 @@ pub mod chess_piece {
                 Self::Bishop(p) => p.get_position(),
             }
         }
+
+        fn set_position(&mut self, k: &Square) {
+            match *self {
+                Self::Pawn(mut p) => p.set_position(k),
+                Self::Queen(mut p) => p.set_position(k),
+                Self::King(mut p) => p.set_position(k),
+                Self::Rook(mut p) => p.set_position(k),
+                Self::Knight(mut p) => p.set_position(k),
+                Self::Bishop(mut p) => p.set_position(k),
+            }
+        }
         
-        fn can_move_to(&mut self, s: &Square, b: &Board) -> bool {
+        fn can_move_to(&self, s: &Square, b: &Board) -> bool {
             match self {
                 Self::Pawn(p) =>   p.can_move_to(s, b),
                 Self::Queen(p) =>  p.can_move_to(s, b),
