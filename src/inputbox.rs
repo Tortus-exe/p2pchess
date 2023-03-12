@@ -38,9 +38,9 @@ pub mod inputbox {
                         reqchars[0]
                     };
                     //check taking
-                    let y = "abcdefgh".find(reqchars[c]).unwrap() as u8;
+                    let x = "abcdefgh".find(reqchars[c]).unwrap() as u8;
                     c=c+1;
-                    let x = reqchars[c].to_digit(10).unwrap() as u8 -1;
+                    let y = 8-reqchars[c].to_digit(10).unwrap() as u8;
                     board.request_move(piece, &(x,y))
                 }
             };

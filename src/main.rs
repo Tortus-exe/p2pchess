@@ -76,6 +76,8 @@ fn main() -> Result<()> {
     // board.request_move('b', &(3,5));
     // board.request_move('n', &(7,5));
     // board.request_move('n', &(2,5));
+    board.request_move('n', &(5,5));
+    // board.request_move('n', &(3,4));
 
     print_board_grid(
         0, // x pos
@@ -84,8 +86,8 @@ fn main() -> Result<()> {
         8,  // num columns horizontally
         2*board_size_multiplier,  // width of each cell
         1*board_size_multiplier,  // height of each cell
+        "87654321".to_string(), 
         "ABCDEFGH".to_string(), 
-        "12345678".to_string(), 
         Color::White, 
         Color::Black, 
         Color::Rgb{r:117, g:83, b:24})?;
@@ -114,7 +116,7 @@ fn main() -> Result<()> {
                 (KeyCode::Enter, _) => {
                     ibox.request_to_board(&mut board);
                 },
-                // (KeyCode::Tab, _) => break,
+                (KeyCode::Tab, _) => break,
                 (KeyCode::Char(x), KeyModifiers::NONE) => drop(ibox.append(x)),
                 (KeyCode::Char(x), KeyModifiers::SHIFT) => drop(ibox.append(x)),
                 _ => ()
@@ -138,7 +140,7 @@ fn main() -> Result<()> {
         ResetColor
     )?;
 
-    // ibox.request_to_board(&mut board);
+    ibox.request_to_board(&mut board);
 
     return Ok(());
 }

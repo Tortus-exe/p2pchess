@@ -6,7 +6,10 @@ pub mod knight {
         fn display_char(&self)->char{self.display_char}
         fn is_white(&self) -> bool {self.is_white}
         fn get_position(&self) -> Square {self.pos}
-        fn set_position(&mut self, &p: &Square) {self.pos = p;}
+        fn set_position(&mut self, &p: &Square) {
+            println!("{:#?}", self.pos);
+            self.pos = p;
+        }
         fn can_move_to(&self, &(tx, ty): &Square, _: &Board) -> bool {
             let possible_moves = vec![
                 (tx+2, ty+1),
@@ -17,6 +20,10 @@ pub mod knight {
                 (tx.checked_sub(1).unwrap_or(10), ty+2), 
                 (tx+1, ty.checked_sub(2).unwrap_or(10)),
                 (tx.checked_sub(1).unwrap_or(10), ty.checked_sub(2).unwrap_or(10))];
+            for (x,y) in possible_moves.iter() {
+                println!("{} {}\r", x,y);
+            }
+            println!("{:#?}\n", self.pos);
             return possible_moves.contains(&self.pos);
         }
     }

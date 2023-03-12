@@ -74,9 +74,18 @@ pub mod chess_piece {
                 Self::Queen(mut p) => p.set_position(k),
                 Self::King(mut p) => p.set_position(k),
                 Self::Rook(mut p) => p.set_position(k),
-                Self::Knight(mut p) => p.set_position(k),
+                Self::Knight(mut p) => p.pos = *k,
                 Self::Bishop(mut p) => p.set_position(k),
             }
+
+            // if let Self::Knight(mut p) = *self {
+            //     p.pos = *k;
+            //     println!("{:?}", p.pos);
+            // }
+
+            // if let Self::Knight(mut p) = *self {
+            //     println!("{:?}", p.pos);
+            // }
         }
         
         fn can_move_to(&self, s: &Square, b: &Board) -> bool {

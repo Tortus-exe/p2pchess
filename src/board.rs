@@ -61,20 +61,33 @@ impl Board {
                     ChessPiece::Bishop(_) => target_piece == 'b',
                     ChessPiece::Knight(_) => target_piece == 'n',
                 };
+
+                if *loc==(5,5) {
+                    println!("{:#?}",*piece);
+                }
                 if piece_matches && origin==(9,9){
                     origin = *loc;
+
+                    // if(4,6)==*loc {
+                        // drop((*piece).can_move_to(&(tx,ty), self));
+                    // }
                 } else if piece_matches && origin != (9,9) {
                     return false;
                 }
             }
         }
-        if origin==(9,9) {return false;}
+        if origin==(9,9) {
+            println!("HELLO");
+            return false;
+        }
 
         if let Some(&mut mut piece) = self.state.get_mut(&origin) {
             if piece.can_move_to(&(tx,ty), self) {
-                piece.set_position(&(tx,ty));
                 self.state.insert((tx, ty), piece);
                 self.state.remove(&origin);
+
+                piece.set_position(&(tx,ty));
+                println!("s{} {}s\r", piece.get_position().0, piece.get_position().1);
                 return true;
             }
         }
