@@ -27,7 +27,21 @@ pub mod inputbox {
             match self.contents.to_lowercase().as_str() {
                 "o-o-o" => board.request_castle_queenside(false),
                 "o-o" => board.request_castle_kingside(false),
-                _ => false
+                req => {
+                    let reqchars: Vec<char> = req.chars().collect();
+                    let mut c = 0;
+                    let piece = if "abcdefgh".contains(reqchars[0]) {
+                        'p'
+                    } else {
+                        c=c+1;
+                        reqchars[0]
+                    };
+                    //check taking
+                    let y = "abcdefgh".find(reqchars[c]).unwrap() as u8;
+                    c=c+1;
+                    let x = reqchars[c].to_digit(10).unwrap() as u8 -1;
+                    board.request_move(piece, &(x,y))
+                }
             };
             self.contents = String::from("");
         }

@@ -69,13 +69,13 @@ fn main() -> Result<()> {
     ]);
     let mut ibox = InputBox::new(7);
 
-    board.request_move('p', &(4,4));
-    board.request_move('q', &(5,5));
-    board.request_move('p', &(3,4));
-    board.request_move('b', &(4,5));
-    board.request_move('b', &(3,5));
-    board.request_move('n', &(7,5));
-    board.request_move('n', &(2,5));
+    // board.request_move('p', &(4,4));
+    // board.request_move('q', &(5,5));
+    // board.request_move('p', &(3,4));
+    // board.request_move('b', &(4,5));
+    // board.request_move('b', &(3,5));
+    // board.request_move('n', &(7,5));
+    // board.request_move('n', &(2,5));
 
     print_board_grid(
         0, // x pos
@@ -109,7 +109,7 @@ fn main() -> Result<()> {
         let event=read()?;
         if let Event::Key(KeyEvent{code: c, modifiers: m, ..})=event {
             match (c, m) {
-                (KeyCode::Char('q'), KeyModifiers::NONE) => break,
+                (KeyCode::Char('q'), KeyModifiers::CONTROL) => break,
                 (KeyCode::Backspace, _) => drop(ibox.delete()),
                 (KeyCode::Enter, _) => {
                     ibox.request_to_board(&mut board);
