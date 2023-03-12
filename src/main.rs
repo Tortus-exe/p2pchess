@@ -73,6 +73,8 @@ fn main() -> Result<()> {
     board.request_move(&(3,7), &(5,5));
     board.request_move(&(3,6), &(3,4));
     board.request_move(&(2,7), &(4,5));
+    board.request_move(&(5,7), &(3,5));
+    board.request_move(&(6,7), &(7,5));
     board.request_move(&(1,7), &(2,5));
 
     print_board_grid(

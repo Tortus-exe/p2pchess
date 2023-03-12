@@ -58,6 +58,30 @@ impl Board {
         return false;
     }
 
+    pub fn request_castle_kingside(&mut self, is_white: bool) -> bool {
+        let y = if is_white {0} else {7};
+        let mut move_signal = false;
+        if self.state.contains_key(&(4,y)) &&
+           !self.state.contains_key(&(5,y)) &&
+           !self.state.contains_key(&(6,y)) &&
+           self.state.contains_key(&(7,y)) {
+            if let Some([ChessPiece::King(king), ChessPiece::Rook(rook)]) = self.state.get_many_mut([&(4,y), &(7,y)]) {
+                if !king.has_moved && !rook.has_moved {move_signal = true;}
+            }
+        }
+
+        if move_signal {
+            if let Some(ChessPiece::King(mut k)) = self.state.remove(&(4,y)) {
+                self.state.insert((6,y), ChessPiece::King(k));
+                k.has_moved = true;
+            }
+            if let Some(r) = self.state.remove(&(7,y)) {
+                self.state.insert((5,y), r);
+            }
+        }
+        move_signal
+    }
+
     pub fn request_castle_queenside(&mut self, is_white: bool) -> bool {
         let y = if is_white {0} else {7};
         let mut move_signal = false;
@@ -66,8 +90,7 @@ impl Board {
            !self.state.contains_key(&(1,y)) &&
            !self.state.contains_key(&(2,y)) &&
            !self.state.contains_key(&(3,y)) &&
-           self.state.contains_key(&(4,y))
-        {
+           self.state.contains_key(&(4,y)) {
             if let Some([ChessPiece::King(king), ChessPiece::Rook(rook)]) = self.state.get_many_mut([&(4,y), &(0,y)]) {
                 if  !king.has_moved && !rook.has_moved {
                     move_signal = true;
@@ -76,14 +99,15 @@ impl Board {
         }
 
         if move_signal {
-            if let Some(k) = self.state.remove(&(4,y)){
-                self.state.insert((2,y), k);
+            if let Some(ChessPiece::King(mut k)) = self.state.remove(&(4,y)){
+                self.state.insert((2,y), ChessPiece::King(k));
+                k.has_moved = true;
             }
             if let Some(r) = self.state.remove(&(0,y)) {
                 self.state.insert((3,y), r);
             }
         }
-        false
+        move_signal
     }
     
     pub fn get_at(&self, sqr: &Square) -> Option<&ChessPiece> {

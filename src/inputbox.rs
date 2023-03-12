@@ -26,6 +26,7 @@ pub mod inputbox {
         pub fn request_to_board(&mut self, board: &mut Board) {
             match self.contents.to_lowercase().as_str() {
                 "o-o-o" => board.request_castle_queenside(false),
+                "o-o" => board.request_castle_kingside(false),
                 _ => false
             };
             self.contents = String::from("");
