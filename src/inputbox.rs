@@ -29,8 +29,9 @@ pub mod inputbox {
                 "o-o" => board.request_castle_kingside(false),
                 req => {
                     let reqchars: Vec<char> = req.chars().collect();
+                    if reqchars.len() < 2 { return; }
                     let mut c = 0;
-                    let piece = if "abcdefgh".contains(reqchars[0]) {
+                    let piece = if "abcdefgh".contains(reqchars[0]) && reqchars[1].to_digit(10)!=None {
                         'p'
                     } else {
                         c=c+1;

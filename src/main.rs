@@ -114,6 +114,7 @@ fn main() -> Result<()> {
                 (KeyCode::Enter, _) => {
                     ibox.request_to_board(&mut board);
                 },
+                // (KeyCode::Tab, _) => break,
                 (KeyCode::Char(x), KeyModifiers::NONE) => drop(ibox.append(x)),
                 (KeyCode::Char(x), KeyModifiers::SHIFT) => drop(ibox.append(x)),
                 _ => ()
@@ -128,6 +129,7 @@ fn main() -> Result<()> {
         draw_input_box(4+(board_size_multiplier as u16*16),0, &ibox)?;
     }
 
+
     disable_raw_mode()?;
     execute!(
         stdout(),
@@ -135,7 +137,9 @@ fn main() -> Result<()> {
         Show,
         ResetColor
     )?;
-    
+
+    // ibox.request_to_board(&mut board);
+
     return Ok(());
 }
 
