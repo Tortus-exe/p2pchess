@@ -69,15 +69,16 @@ fn main() -> Result<()> {
     ]);
     let mut ibox = InputBox::new(7);
 
-    // board.request_move('p', &(4,4));
-    // board.request_move('q', &(5,5));
-    // board.request_move('p', &(3,4));
-    // board.request_move('b', &(4,5));
-    // board.request_move('b', &(3,5));
-    // board.request_move('n', &(7,5));
-    // board.request_move('n', &(2,5));
+    board.request_move('p', &(4,4));
+    board.request_move('q', &(5,5));
+    board.request_move('p', &(3,4));
+    board.request_move('b', &(4,5));
+    board.request_move('b', &(3,5));
+    board.request_move('n', &(7,5));
+    board.request_move('n', &(2,5));
     board.request_move('n', &(5,5));
-    // board.request_move('n', &(3,4));
+    board.request_move('n', &(3,4));
+    board.request_move('p', &(2,3));
 
     print_board_grid(
         0, // x pos

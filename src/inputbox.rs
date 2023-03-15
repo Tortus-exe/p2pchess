@@ -31,17 +31,24 @@ pub mod inputbox {
                     let reqchars: Vec<char> = req.chars().collect();
                     if reqchars.len() < 2 { return; }
                     let mut c = 0;
-                    let piece = if "abcdefgh".contains(reqchars[0]) && reqchars[1].to_digit(10)!=None {
+                    let piece = if "abcdefgh".contains(reqchars[0]) && "1234567890x".contains(reqchars[1]) {
                         'p'
                     } else {
                         c=c+1;
                         reqchars[0]
                     };
-                    //check taking
-                    let x = "abcdefgh".find(reqchars[c]).unwrap() as u8;
+                    let taking = 'x'==reqchars[c+1];
+                    if taking { c=c+2; }
+
+                    let x = "abcdefgh".find(reqchars[c]).unwrap_or(9) as u8;
                     c=c+1;
-                    let y = 8-reqchars[c].to_digit(10).unwrap() as u8;
-                    board.request_move(piece, &(x,y))
+                    let mut y = reqchars[c].to_digit(10).unwrap_or(9) as u8;
+                    if x>8||y>8 { return; }
+                    y=8-y;
+                    if taking == board.state.contains_key(&(x,y)) {
+                        board.request_move(piece, &(x,y));
+                    }
+                    true
                 }
             };
             self.contents = String::from("");
