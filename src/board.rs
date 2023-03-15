@@ -30,7 +30,7 @@ impl Board {
             'q' => ChessPiece::Queen(Queen{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
             'r' => ChessPiece::Rook(Rook{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
             'k' => ChessPiece::King(King{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
-            _ => ChessPiece::Pawn(Pawn{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
+            _ =>   ChessPiece::Pawn(Pawn{pos:loc, is_white:true,display_char:disp,has_moved:false,}),
         }
     }
 
@@ -61,33 +61,29 @@ impl Board {
                     ChessPiece::Bishop(_) => target_piece == 'b',
                     ChessPiece::Knight(_) => target_piece == 'n',
                 };
-
-                if *loc==(5,5) {
-                    println!("{:#?}",*piece);
-                }
                 if piece_matches && origin==(9,9){
                     origin = *loc;
-
-                    // if(4,6)==*loc {
-                        // drop((*piece).can_move_to(&(tx,ty), self));
-                    // }
                 } else if piece_matches && origin != (9,9) {
                     return false;
                 }
             }
         }
         if origin==(9,9) {
-            println!("HELLO");
             return false;
         }
 
         if let Some(&mut mut piece) = self.state.get_mut(&origin) {
             if piece.can_move_to(&(tx,ty), self) {
-                self.state.insert((tx, ty), piece);
-                self.state.remove(&origin);
-
                 piece.set_position(&(tx,ty));
-                println!("s{} {}s\r", piece.get_position().0, piece.get_position().1);
+                match piece {
+                    ChessPiece::Pawn(mut p) =>   {p.pos = (tx,ty); self.state.insert((tx,ty), ChessPiece::Pawn(p))},
+                    ChessPiece::Bishop(mut p) => {p.pos = (tx,ty); self.state.insert((tx,ty), ChessPiece::Bishop(p))},
+                    ChessPiece::Rook(mut p) =>   {p.pos = (tx,ty); self.state.insert((tx,ty), ChessPiece::Rook(p))},
+                    ChessPiece::King(mut p) =>   {p.pos = (tx,ty); self.state.insert((tx,ty), ChessPiece::King(p))},
+                    ChessPiece::Queen(mut p) =>  {p.pos = (tx,ty); self.state.insert((tx,ty), ChessPiece::Queen(p))},
+                    ChessPiece::Knight(mut p) => {p.pos = (tx,ty); self.state.insert((tx,ty), ChessPiece::Knight(p))},
+                };
+                self.state.remove(&origin);
                 return true;
             }
         }

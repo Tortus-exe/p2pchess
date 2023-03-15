@@ -74,7 +74,7 @@ pub mod chess_piece {
                 Self::Queen(mut p) => p.set_position(k),
                 Self::King(mut p) => p.set_position(k),
                 Self::Rook(mut p) => p.set_position(k),
-                Self::Knight(mut p) => p.pos = *k,
+                Self::Knight(mut p) => p.set_position(k),
                 Self::Bishop(mut p) => p.set_position(k),
             }
 

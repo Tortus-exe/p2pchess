@@ -113,9 +113,7 @@ fn main() -> Result<()> {
             match (c, m) {
                 (KeyCode::Char('q'), KeyModifiers::CONTROL) => break,
                 (KeyCode::Backspace, _) => drop(ibox.delete()),
-                (KeyCode::Enter, _) => {
-                    ibox.request_to_board(&mut board);
-                },
+                (KeyCode::Enter, _) => ibox.request_to_board(&mut board),
                 (KeyCode::Tab, _) => break,
                 (KeyCode::Char(x), KeyModifiers::NONE) => drop(ibox.append(x)),
                 (KeyCode::Char(x), KeyModifiers::SHIFT) => drop(ibox.append(x)),
