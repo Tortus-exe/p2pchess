@@ -27,18 +27,24 @@ pub mod inputbox {
             match self.contents.to_lowercase().as_str() {
                 "o-o-o" => board.request_castle_queenside(false),
                 "o-o" => board.request_castle_kingside(false),
-                req => {
-                    let reqchars: Vec<char> = req.chars().collect();
+                _ => {
+                    let reqchars: Vec<char> = self.contents.as_str().chars().collect();
                     if reqchars.len() < 2 { return; }
                     let mut c = 0;
-                    let piece = if "abcdefgh".contains(reqchars[0]) && "1234567890x".contains(reqchars[1]) {
+                    let mut xdiscrim = ' ';
+                    let piece = if "abcdefgh".contains(reqchars[0]) {
+                        if reqchars[1]=='x' {
+                            xdiscrim = reqchars[0];
+                            c=c+1;
+                        }
                         'p'
-                    } else {
+                    } else if "BRQNK".contains(reqchars[0]) {
                         c=c+1;
-                        reqchars[0]
-                    };
-                    let taking = 'x'==reqchars[c+1];
-                    if taking { c=c+2; }
+                        reqchars[0].to_ascii_lowercase()
+                    } else { ' ' };
+                    if piece == ' ' { return; }
+                    let taking = 'x'==reqchars[c];
+                    if taking { c=c+1; }
 
                     let x = "abcdefgh".find(reqchars[c]).unwrap_or(9) as u8;
                     c=c+1;
